@@ -14,6 +14,9 @@ const inter = Inter({
 export const metadata = {
   title: "Noisy by Nature",
   description: "Handcrafted Eurorack Cases for Sound Explorers",
+  icons: {
+    icon: "/favicon.jpg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
