@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : "https://noisybynature.com";
+        : "https://noisybynature.eu";
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
