@@ -15,9 +15,17 @@ export const metadata = {
   title: "Noisy by Nature",
   description: "Handcrafted Eurorack Cases for Sound Explorers",
   icons: {
-    icon: "/favicon.jpg",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon-180.png",
+    other: [
+      { rel: "icon", url: "/favicon-32.png", sizes: "32x32" },
+      { rel: "icon", url: "/favicon-192.png", sizes: "192x192" },
+      { rel: "icon", url: "/favicon-512.png", sizes: "512x512" },
+    ],
   },
 };
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
