@@ -174,7 +174,7 @@ export default function Home() {
       </section>
 
       {/* --- FEATURED DROP --- */}
-      <section id="shop" className="bg-[#1A1410] text-[#F5EBDD] py-12 px-6 md:px-12 lg:px-20 overflow-hidden">
+      <section id="shop" className="bg-[#1A1410] text-[#F5EBDD] pt-0 pb-6 px-6 md:px-12 lg:px-20 overflow-hidden">
         <div className="max-w-screen-xl mx-auto text-center mb-10">
           <h2 className="text-4xl font-display mb-2 text-noisy-copper">Featured Drop: Western Floral</h2>
           <p className="text-base font-body text-[#E6D9C5]/80">

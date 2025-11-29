@@ -104,3 +104,59 @@ body {
     transform: scale(1);
   }
 }
+/* === MailerLite Overrides — Noisy by Nature Dark === */
+
+/* Fond du panneau / popup */
+.ml-form-embedContainer,
+.ml-form-embedWrapper,
+.ml-form-popup,
+.ml-form-popupContent,
+.ml-onclick-form-popup {
+  background-color: #1a1410 !important; /* Marron foncé cuir */
+  border-radius: 8px !important;
+}
+
+/* Titres, paragraphes, labels */
+.ml-form-embedWrapper h1,
+.ml-form-embedWrapper h2,
+.ml-form-embedWrapper p,
+.ml-form-embedWrapper label,
+.ml-form-popupContent h1,
+.ml-form-popupContent p {
+  color: #F5EAD6 !important; /* Crème élégante */
+}
+
+/* Inputs */
+.ml-form-embedWrapper input,
+.ml-form-popupContent input,
+.ml-form-embedWrapper textarea,
+.ml-form-popupContent textarea {
+  background-color: #3A2C22 !important;
+  border: 1px solid #B89C7A !important; /* Marron clair “vintage” */
+  color: #F5EAD6 !important; /* Creme */
+  border-radius: 6px !important;
+  padding: 10px 12px !important;
+}
+
+/* Bouton */
+.ml-form-embedWrapper button,
+.ml-form-popupContent button {
+  background-color: #C9A65C !important; /* Or Noisy */
+  color: #1A1410 !important;             /* Noir profond */
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  padding: 10px 14px !important;
+  transition: background 0.25s ease !important;
+}
+
+/* Hover du bouton */
+.ml-form-embedWrapper button:hover,
+.ml-form-popupContent button:hover {
+  background-color: #D0AF7A !important; /* Or clair au hover */
+}
+
+/* Liens */
+.ml-form-embedWrapper a,
+.ml-form-popupContent a {
+  color: #C9A65C !important;
+}
