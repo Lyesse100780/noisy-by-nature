@@ -3,7 +3,7 @@ export const products = [
     slug: "sagebloom",
     name: "Sagebloom – 6U / 62HP",
     price: "€260",
-    stripePriceId: "price_1SPUq1ChL5cUM7RglzsbAbgz",
+    paymentLink: "https://buy.stripe.com/7sYfZgby9cCrbGK8op4ow07",
     description: `
 A subtle beige skiff with warm undertones, handcrafted with vintage floral vinyl. 
 Compact, balanced, and designed for focused modular setups.`,
@@ -27,7 +27,7 @@ Compact, balanced, and designed for focused modular setups.`,
     slug: "coraldust",
     name: "Coral Dust – 6U / 60HP",
     price: "€250",
-    stripePriceId: "price_1SSnwAChL5cUM7RgjyhDDAxA",
+    paymentLink: " https://buy.stripe.com/eVq28q0Tvauj6mq3454ow06",
     description: `
 Soft coral tones with delicate highlights and depth.
 A skiff that brings warmth and personality to any setup.`,
@@ -49,12 +49,13 @@ A skiff that brings warmth and personality to any setup.`,
 
   {
     slug: "frontiergreen",
-    name: "Frontier Green – 6U / 62HP",
-    price: "€260",
-    stripePriceId: "price_1SSo5LChL5cUM7RgJMuD98aq",
+    name: "Frontier Green – 6U / 62HP B-STOCK",
+    price: "€220",
+    paymentLink: "https://buy.stripe.com/14A00icCd1XNdOS4894ow03",
     description: `
 Rich forest tones with a touch of patina and depth.
-A skiff that adds depth and calm to any creative space.`,
+A skiff that adds depth and calm to any creative space.
+PS: This is a B-Stock item with minor cosmetic imperfections. This skiff has a tiny, barely visible scuff (I know it’s there 😉), so I’ve applied a small discount to reflect that.`,
     specs: [
       "6U / 62HP format",
       "Usable height = 5.9 cm",
@@ -75,7 +76,7 @@ A skiff that adds depth and calm to any creative space.`,
     slug: "ashtrail",
     name: "Ash Trail – 6U / 96HP",
     price: "€490",
-    stripePriceId: "price_1SSo9QChL5cUM7RgJfbzTBOs",
+    paymentLink: "https://buy.stripe.com/6oUdR80TvgSHeSWbAB4ow05",
     description: `
 Cream-tinted vinyl with subtle vintage patina. 
 Elegant, neutral, and timeless case — a centerpiece for refined systems.`,
@@ -100,7 +101,7 @@ Elegant, neutral, and timeless case — a centerpiece for refined systems.`,
     slug: "oxbloodmesa",
     name: "Oxblood Mesa – 6U / 84HP",
     price: "€460",
-    stripePriceId: "price_1SSoCkChL5cUM7Rg5NLpzcvZ",
+
     description: `
 A deep burgundy with intricate floral embossing case. 
 Classic Western tones meet modern craftsmanship.`,
@@ -122,10 +123,32 @@ Classic Western tones meet modern craftsmanship.`,
   },
 
   {
+  slug: "Black & Silver",
+  name: "Black & Silver – 6U / 84HP",
+  price: "€450",
+  paymentLink: "https://buy.stripe.com/eVq6oG1XzcCr8uy0VX4ow04",
+  description: `
+Deep black vinyl with deep floral embossing.
+A bold yet elegant case, handcrafted in Paris.`,
+  specs: [
+    "6U / 84HP format",
+    "Usable height = 8.6 cm",
+    "Nano Bus Bar – 20 slots",
+    "Mean Well RT-65B PSU",
+    "Handcrafted in Paris",
+  ],
+  images: [
+    "/images/western-floral/Deep Black 1.jpg",
+    "/images/western-floral/Deep Black 2.jpg",
+    "/images/western-floral/Deep Black 3.jpg",
+    "/images/western-floral/Deep Black 4.jpg",
+  ],
+},
+  {
     slug: "burntleather",
     name: "Burnt Leather – 6U / 96HP",
     price: "€490",
-    stripePriceId: "price_1SSoEiChL5cUM7RgZjBAHGd4",
+    paymentLink: "https://buy.stripe.com/eVq4gyfOpcCraCG6gh4ow08",
     description: `
 Rich dark tones with a superb patina. 
 Wrapped in sturdy tolex, evocative of worn saddles and vintage studio amps.`,
