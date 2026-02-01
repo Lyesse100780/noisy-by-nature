@@ -156,7 +156,7 @@ export default function Home() {
           </p>
 
           <p>
-            As a full-time composer, I rarely take custom orders. When it happens, I can’t always guarantee short lead times or the availability of a specific color — but don’t hesitate to drop me a line at{" "}
+            I also take custom orders depending on my schedule and material availability — feel free to drop me a line at{" "}
             <a
               href="mailto:contact@noisybynature.eu"
               className="text-noisy-copper hover:text-noisy-copper/80 underline underline-offset-2 transition-colors"
