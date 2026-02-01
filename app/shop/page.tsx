@@ -74,15 +74,23 @@ export default function Shop() {
                 <p className="text-lg font-semibold mb-3">{product.price}</p>
 
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = product.paymentLink;
-                  }}
-                  className="bg-noisy-copper hover:bg-noisy-copper/80 text-white px-6 py-2 rounded-md w-full transition"
-                >
-                  Buy Now
-                </button>
+  type="button"
+  disabled={!product.paymentLink}
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!product.paymentLink) return;
+    window.location.assign(product.paymentLink);
+  }}
+  className={`px-6 py-2 rounded-md w-full transition ${
+    product.paymentLink
+      ? "bg-noisy-copper hover:bg-noisy-copper/80 text-white"
+      : "bg-[#3a2f27] text-white/40 cursor-not-allowed opacity-60"
+  }`}
+>
+  Buy Now
+</button>
+
               </div>
             </div>
           </a>
