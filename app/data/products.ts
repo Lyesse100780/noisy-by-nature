@@ -123,10 +123,10 @@ Classic Western tones meet modern craftsmanship.`,
   },
 
   {
-  slug: "Black & Silver",
+  slug: "black-and-silver",
   name: "Black & Silver – 6U / 84HP",
   price: "€450",
-  paymentLink: "https://buy.stripe.com/eVq6oG1XzcCr8uy0VX4ow04",
+  paymentLink:"https://buy.stripe.com/eVq6oG1XzcCr8uy0VX4ow04",
   description: `
 Deep black vinyl with deep floral embossing.
 A bold yet elegant case, handcrafted in Paris.`,
