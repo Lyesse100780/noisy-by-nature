@@ -64,7 +64,7 @@ PS: This is a B-Stock item with minor cosmetic imperfections. This skiff has a t
       "Handcrafted in Paris",
     ],
     images: [
-      "/images/western-floral/Frontier Green 1.jpg",
+      "/images/western-floral/Frontier Green 7.png",
       "/images/western-floral/Frontier Green 2.jpg",
       "/images/western-floral/Frontier Green 3.jpg",
       "/images/western-floral/Frontier Green 4.jpg",
