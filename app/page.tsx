@@ -64,7 +64,7 @@ export default function Home() {
   const items = [
     { file: "Sagebloom 1.jpg", name: "Sagebloom – 6U / 62HP", link: "/shop/sagebloom", tone: "dark" },
     { file: "Coral Dust 1.jpg", name: "Coral Dust – 6U / 60HP", link: "/shop/coraldust", tone: "dark" },
-    { file: "Frontier Green 1.jpg", name: "Frontier Green – 6U / 62HP", link: "/shop/frontiergreen", tone: "dark" },
+    { file: "Frontier Green 7.png", name: "Frontier Green – 6U / 62HP", link: "/shop/frontiergreen", tone: "dark" },
     { file: "Ash Trail 1.jpg", name: "Ash Trail – 6U / 96HP", link: "/shop/ashtrail", tone: "dark" },
     { file: "Oxblood Mesa 1.jpg", name: "Oxblood Mesa – 6U / 84HP", link: "/shop/oxbloodmesa", tone: "light" },
     { file: "Burnt Leather 1.jpg", name: "Burnt Leather – 6U / 96HP", link: "/shop/burntleather", tone: "light" },
