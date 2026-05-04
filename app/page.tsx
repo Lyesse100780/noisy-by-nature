@@ -1,25 +1,52 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import Newsletter from "@/components/Newsletter";
+import SiteNav from "@/components/SiteNav";
+import { isSanityConfigured, sanityClient } from "@/lib/sanity/client";
+import {
+  featuredWorkshopPostsQuery,
+  type WorkshopPostSummary,
+} from "@/lib/sanity/queries";
+
+type CarouselItem = {
+  imageUrl?: string;
+  name: string;
+  tone: "dark" | "light";
+};
+
+const inTheWildItems: CarouselItem[] = [
+  { imageUrl: "/images/in-the-wild/my-case.jpeg", name: "Studio case", tone: "dark" },
+  { imageUrl: "/images/in-the-wild/attif-case.jpeg", name: "Patch in progress", tone: "dark" },
+  { imageUrl: "/images/in-the-wild/maxime-faders.jpeg", name: "FAD3RS in session", tone: "dark" },
+  { imageUrl: "/images/in-the-wild/the-unperson-mini-case.jpeg", name: "Mini case", tone: "dark" },
+];
+
+const inTheWildCarouselItems = [...inTheWildItems, ...inTheWildItems];
+
+const mapFeaturedWorkshopPosts = (posts: WorkshopPostSummary[]) =>
+  posts.filter((post) => post.title && post.slug && post.imageUrl);
 
 export default function Home() {
   const [showContact, setShowContact] = useState(false);
+  const [workshopPosts, setWorkshopPosts] = useState<WorkshopPostSummary[]>([]);
+  const [activeWorkshopPost, setActiveWorkshopPost] = useState(0);
   const carouselRef = useRef<HTMLDivElement | null>(null);
+  const workshopCarouselRef = useRef<HTMLDivElement | null>(null);
   const scrollInterval = useRef<number | null>(null);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
-  const touchStartTime = useRef<number | null>(null);
 
   // --- AUTO-SCROLL DESKTOP ---
   useEffect(() => {
     const el = carouselRef.current;
-    if (!el || window.innerWidth < 768) return;
+    if (!el) return;
     let pos = 0;
     const step = () => {
-      pos += 0.6;
-      if (pos >= el.scrollWidth - el.clientWidth) pos = 0;
+      pos += 0.42;
+      const resetPoint = el.scrollWidth / 2;
+      if (pos >= resetPoint) pos = 0;
       el.scrollLeft = pos;
       scrollInterval.current = requestAnimationFrame(step);
     };
@@ -29,215 +56,366 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const el = workshopCarouselRef.current;
+    if (!el || workshopPosts.length < 2) return;
+
+    const updateActivePost = () => {
+      const cards = Array.from(el.children) as HTMLElement[];
+      if (!cards.length) return;
+
+      const nextIndex = cards.reduce(
+        (closest, card, index) => {
+          const distance = Math.abs(card.offsetLeft - el.scrollLeft);
+          return distance < closest.distance ? { index, distance } : closest;
+        },
+        { index: 0, distance: Number.POSITIVE_INFINITY },
+      ).index;
+
+      setActiveWorkshopPost(nextIndex);
+    };
+
+    updateActivePost();
+    el.addEventListener("scroll", updateActivePost, { passive: true });
+    return () => el.removeEventListener("scroll", updateActivePost);
+  }, [workshopPosts.length]);
+
+  const scrollWorkshopTo = (index: number) => {
+    const el = workshopCarouselRef.current;
+    const card = el?.children[index] as HTMLElement | undefined;
+    if (!el || !card) return;
+    el.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (!isSanityConfigured || !sanityClient) return;
+
+    let ignore = false;
+    const client = sanityClient;
+
+    const loadSanityContent = async () => {
+      try {
+        const featuredPosts = await client.fetch<WorkshopPostSummary[]>(featuredWorkshopPostsQuery);
+
+        if (ignore) return;
+
+        const sanityWorkshopPosts = mapFeaturedWorkshopPosts(featuredPosts || []);
+
+        setWorkshopPosts(sanityWorkshopPosts);
+      } catch {
+        if (!ignore) {
+          setWorkshopPosts([]);
+        }
+      }
+    };
+
+    loadSanityContent();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   // --- TOUCH INTERACTIONS MOBILE ---
-  const handleTouchStart = (e: React.TouchEvent<HTMLAnchorElement>) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
-    touchStartTime.current = Date.now();
     e.currentTarget.classList.add("scale-[1.03]");
   };
 
-  const handleTouchEnd = (e: React.TouchEvent<HTMLAnchorElement>, href: string) => {
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     const dx = Math.abs((e.changedTouches[0].clientX ?? 0) - (touchStartX.current ?? 0));
     const dy = Math.abs((e.changedTouches[0].clientY ?? 0) - (touchStartY.current ?? 0));
-    const dt = Date.now() - (touchStartTime.current ?? 0);
     e.currentTarget.classList.remove("scale-[1.03]");
-    if (dx < 10 && dy < 10 && dt < 250) window.location.href = href;
+    if (dx > 10 || dy > 10) e.preventDefault();
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLAnchorElement>) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     e.currentTarget.classList.remove("scale-[1.03]");
   };
-
-  // --- FLÈCHES DESKTOP ---
-  const scroll = (direction: "left" | "right") => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const scrollAmount = window.innerWidth > 1024 ? 350 : 280;
-    el.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  // --- DONNÉES DU CARROUSEL ---
-  const items = [
-    { file: "Sagebloom 1.jpg", name: "Sagebloom – 6U / 62HP", link: "/shop/sagebloom", tone: "dark" },
-    { file: "Coral Dust 1.jpg", name: "Coral Dust – 6U / 60HP", link: "/shop/coraldust", tone: "dark" },
-    { file: "Frontier Green 7.png", name: "Frontier Green – 6U / 62HP", link: "/shop/frontiergreen", tone: "dark" },
-    { file: "Ash Trail 1.jpg", name: "Ash Trail – 6U / 96HP", link: "/shop/ashtrail", tone: "dark" },
-    { file: "Oxblood Mesa 1.jpg", name: "Oxblood Mesa – 6U / 84HP", link: "/shop/oxbloodmesa", tone: "light" },
-    { file: "Burnt Leather 1.jpg", name: "Burnt Leather – 6U / 96HP", link: "/shop/burntleather", tone: "light" },
-  ];
 
   return (
     <>
       {/* --- HERO SECTION --- */}
       <section
         id="hero"
-        className="relative h-[48vh] md:h-[42vh] w-full bg-cover bg-center flex flex-col text-[#F5EBDD]
-        bg-[url('/banner-mobile.jpg')] md:bg-[url('/banner-desktop.jpg')]"
+        className="site-hero relative w-full overflow-hidden bg-[#100b08] text-[#f4ead8] [--hero-desktop-height:23vh] [--hero-mobile-height:8.25rem] max-[460px]:[--hero-mobile-height:10.25rem]"
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1410]/60 via-transparent"></div>
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-100"
+          style={{ backgroundImage: "url('/images/brand/background-topography-v2.png')" }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_44%,rgba(177,105,48,0.09),transparent_30%),linear-gradient(90deg,rgba(8,5,4,0.91),rgba(17,11,8,0.58)_46%,rgba(7,5,4,0.91)),linear-gradient(180deg,rgba(5,4,3,0.6),rgba(15,10,7,0.32)_52%,#1A1410_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-b from-transparent to-[#1A1410]" />
 
-        <header className="absolute top-0 left-0 w-full z-20 flex justify-center items-center px-8 py-5">
-          <nav className="flex items-center justify-center space-x-6 text-xs md:text-sm uppercase tracking-wider text-[#F5EBDD]/80">
-            <a href="#hero" className="hover:text-noisy-copper transition-colors">
-              Home
-            </a>
-            <a href="/shop" className="hover:text-noisy-copper transition-colors">
-              Shop
-            </a>
-            <button
-              onClick={() => setShowContact(true)}
-              className="hover:text-noisy-copper transition-colors"
+        <SiteNav onContact={() => setShowContact(true)} joinHref="#join-list" showHomeInMobileMenu={false} />
+
+        <div className="site-hero__content relative z-10 mx-auto flex w-full max-w-7xl translate-y-3 items-center justify-center px-6 md:translate-y-0 md:px-10 lg:px-14">
+          <div className="text-center">
+            <h1
+              className="[font-family:var(--font-playfair)] font-medium uppercase leading-none tracking-[0.18em] text-[rgba(219,198,168,0.92)] [text-shadow:0_1px_0_rgba(255,238,207,0.08),0_-1px_0_rgba(0,0,0,0.72),0_10px_26px_rgba(0,0,0,0.45)] [-webkit-text-stroke:0.18px_rgba(255,236,202,0.08)]"
             >
-              CONTACT
-            </button>
-            <a
-              href="https://www.instagram.com/noisy_by_nature_lab"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#F5EBDD]/70 hover:text-noisy-copper transition-colors"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                className="w-4 h-4 md:w-5 md:h-5 align-middle"
-              >
-                <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.25-.75a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5z" />
-              </svg>
-            </a>
-          </nav>
-        </header>
-
-        <div className="relative z-10 flex flex-col items-center text-center px-6 mt-[14vh] md:mt-[13vh]">
-  {/* LOGO */}
-  <picture>
-    {/* Logo vertical uniquement pour mobile PORTRAIT */}
-    <source media="(max-width: 767px) and (orientation: portrait)" srcSet="/logo-vertical.png" />
-    {/* Logo horizontal pour tout le reste */}
-    <img
-      src="/logo-main.png"
-      alt="Noisy by Nature"
-      className="h-32 md:h-36 w-auto mb-4 drop-shadow-lg transition-all duration-300"
-    />
-  </picture>
-
-  {/* TEXTES */}
-  <p className="text-base md:text-2xl font-body mb-2 text-[#F5EBDD]/90">
-    Premium Eurorack Cases
-  </p>
-  <p className="text-xs md:text-sm uppercase tracking-[0.25em] text-noisy-copper font-medium">
-    Handcrafted in Paris
-  </p>
-</div>
-
-
-
-
-
-      </section>
-
-      {/* --- CONCEPT SECTION --- */}
-      <section id="concept" className="bg-[#1A1410] text-[#F5EBDD] py-20 px-6 md:px-12 lg:px-20">
-        <div className="max-w-screen-lg mx-auto space-y-6 text-[17px] font-body leading-relaxed font-light">
-          <p>
-            I’m Lyesse, a professional composer. When I looked for a new case for my Eurorack modules, I quickly faced a simple truth — none of the available ones truly honored the instruments they were meant to hold.
-          </p>
-
-          <p>
-            So, I decided to build my own. A case worthy of the small treasures our modern modules have become. Over time, the process evolved — new ideas appeared, and essential features revealed themselves through trial and error.
-          </p>
-
-          <p>
-            Today, I’m offering you the same cases I wanted for myself — handcrafted with care, precision, and passion. Inspired by vintage design and a love for <strong>textures</strong>, I craft each case using tolex, fabrics and high-quality vinyls. Every creation is unique. Every collection is limited, shaped by the materials I find and the mood of the moment.
-          </p>
-
-          <p>
-            I also take custom orders depending on my schedule and material availability — feel free to drop me a line at{" "}
-            <a
-              href="mailto:contact@noisybynature.eu"
-              className="text-noisy-copper hover:text-noisy-copper/80 underline underline-offset-2 transition-colors"
-            >
-              contact@noisybynature.eu
-            </a>{" "}
-            if you’d like to discuss the case of your dreams.
-          </p>
-
-          {/* --- NEWSLETTER --- */}
-<Newsletter />
-
-
+              <span className="block whitespace-nowrap text-[clamp(1.72rem,5vw,4.65rem)] max-[460px]:hidden md:text-[clamp(2rem,5vw,4.65rem)]">
+                Noisy by Nature
+              </span>
+              <span className="hidden text-[clamp(1.45rem,8.6vw,2.1rem)] max-[460px]:flex max-[460px]:flex-col max-[460px]:items-center max-[460px]:gap-0.5">
+                <span>Noisy</span>
+                <span className="text-[0.42em] lowercase tracking-[0.14em] text-[#d5a06a]/88">by</span>
+                <span>Nature</span>
+              </span>
+            </h1>
+            <div className="mx-auto mt-3 flex w-full max-w-[min(86vw,44rem)] items-center justify-center gap-3 text-[#c38a50]/70 md:mt-4 md:gap-4">
+              <span className="hidden h-px flex-1 bg-current opacity-40 sm:block" />
+              <span className="h-1 w-1 rounded-full bg-current opacity-70" />
+              <p className="[font-family:var(--font-inter)] whitespace-nowrap text-[clamp(0.48rem,1.35vw,0.68rem)] font-medium uppercase leading-none tracking-[0.24em] text-[#d5a06a]/88">
+                Handcrafted Tools for Expressive Creators
+              </p>
+              <span className="h-1 w-1 rounded-full bg-current opacity-70" />
+              <span className="hidden h-px flex-1 bg-current opacity-40 sm:block" />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* --- FEATURED DROP --- */}
-      <section id="shop" className="bg-[#1A1410] text-[#F5EBDD] pt-0 pb-6 px-6 md:px-12 lg:px-20 overflow-hidden">
-        <div className="max-w-screen-xl mx-auto text-center mb-10">
-          <h2 className="text-4xl font-display mb-2 text-noisy-copper">Featured Drop: Western Floral</h2>
-          <p className="text-base font-body text-[#E6D9C5]/80">
-            Limited collections, handcrafted with passion.
-          </p>
+      {/* --- PRODUCT ECOSYSTEM --- */}
+      <div className="topographic-surface bg-[#1A1410]">
+      <section id="controllers" className="text-[#F5EBDD] px-6 pb-18 pt-10 md:px-12 md:pb-24 md:pt-12 lg:px-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="space-y-16 md:space-y-20">
+            <div className="border-t border-[#8f5c32]/18 pt-10">
+              <div className="mb-8 md:mb-10">
+                <p className="[font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
+                  Controllers
+                </p>
+              </div>
+              <div className="space-y-10">
+                <Link
+                  id="fad3rs"
+                  href="/fad3rs"
+                  className="group grid gap-9 focus:outline-none min-[720px]:grid-cols-[0.42fr_0.58fr] min-[720px]:items-center min-[720px]:gap-7 min-[980px]:grid-cols-[0.48fr_0.52fr] min-[980px]:gap-10 lg:grid-cols-[0.52fr_0.48fr] lg:gap-18"
+                  aria-label="View FAD3RS"
+                >
+                  <div className="relative h-[30rem] w-full overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_30px_76px_rgba(0,0,0,0.34)] min-[720px]:h-[30rem] min-[980px]:h-[34rem] lg:h-[40rem]">
+                    <img
+                      src="/images/brand/fad3rs-img1.png"
+                      alt="FAD3RS MIDI controller on a wood surface"
+                      className="h-full w-full object-cover object-center opacity-88 transition duration-500 group-hover:scale-[1.018] group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.01),rgba(12,8,6,0.18)),linear-gradient(90deg,rgba(14,9,7,0.2),transparent_42%,rgba(14,9,7,0.18))]" />
+                  </div>
+                  <div className="min-[720px]:py-4 min-[980px]:py-8 lg:py-12">
+                    <p className="[font-family:var(--font-inter)] mb-3 text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/78">
+                      New release
+                    </p>
+                    <h3 className="[font-family:var(--font-inter)] text-[clamp(2.4rem,5.7vw,5.45rem)] font-semibold uppercase leading-none tracking-[0.18em] text-[#d8b98c] [font-variant-numeric:tabular-nums] transition-colors duration-300 group-hover:text-[#e4c89e] lg:text-[clamp(3rem,7.6vw,6.4rem)]">
+                      FAD3RS
+                    </h3>
+                    <p className="mt-5 max-w-xl text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/78 md:text-base min-[980px]:text-lg">
+                      A class-compliant MIDI controller built around three 100mm Alps faders for expressive automation and precise control.
+                    </p>
+                    <p className="mt-4 max-w-xl text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/70 md:text-base min-[980px]:text-lg">
+                      Designed for composers, sound designers, and tactile workflows where drawing curves with a mouse breaks the musical flow.
+                    </p>
+                    <p className="[font-family:var(--font-inter)] mt-7 text-xs font-medium uppercase tracking-[0.24em] text-[#d5a06a]/86">
+                      Stop clicking. Start drawing.
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            <div className="border-y border-[#8f5c32]/18 py-4 md:py-5">
+              <Newsletter id="join-list" />
+            </div>
+
+            <div className="-mt-10 pt-4 md:-mt-12 md:pt-5">
+              <div className="mb-5 md:mb-6">
+                <p className="[font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
+                  Cases
+                </p>
+              </div>
+              <div className="grid gap-10 min-[720px]:grid-cols-[0.42fr_0.58fr] min-[720px]:items-center min-[720px]:gap-8 lg:grid-cols-[0.44fr_0.56fr] lg:gap-20">
+                <div className="space-y-12 min-[720px]:py-8 lg:py-14">
+                  <Link
+                    href="/cases"
+                    className="group block transition-opacity duration-300 hover:opacity-90 focus:outline-none"
+                    aria-label="View Eurorack Cases"
+                  >
+                    <h3 className="[font-family:var(--font-inter)] text-lg font-medium uppercase tracking-[0.24em] text-[#e2c8a2]/88 md:text-xl">
+                      Eurorack Cases
+                    </h3>
+                    <p className="mt-5 max-w-md text-[1rem] font-light leading-relaxed text-[#e6d9c5]/74">
+                      Our Eurorack modules have become true pieces of craftsmanship — why should their enclosure be any different?
+                    </p>
+                    <p className="mt-5 max-w-md text-[1rem] font-light leading-relaxed text-[#e6d9c5]/68">
+                      Discover a refined selection of handcrafted cases, built with meticulous attention to detail and a deeply artisanal approach.
+                    </p>
+                    <p className="mt-5 max-w-md text-[1rem] font-light leading-relaxed text-[#e6d9c5]/68">
+                      Inspiration also comes from the tools we use — and the stories they tell us.
+                    </p>
+                  </Link>
+                  <Link
+                    id="bespoke"
+                    href="/bespoke"
+                    className="group block border-l border-[#8f5c32]/20 pl-6 transition-colors duration-300 hover:border-[#c69054]/42 focus:outline-none"
+                    aria-label="View Bespoke Builds"
+                  >
+                    <h3 className="[font-family:var(--font-inter)] text-sm font-medium uppercase tracking-[0.26em] text-[#e2c8a2]/86">
+                      Bespoke Builds
+                    </h3>
+                    <p className="mt-5 max-w-sm text-[1rem] font-light leading-relaxed text-[#e6d9c5]/68">
+                      Need a specific format,
+                      <br />
+                      finish, or workflow?
+                    </p>
+                    <p className="[font-family:var(--font-inter)] mt-7 text-xs font-medium uppercase tracking-[0.22em] text-[#d5a06a]/82">
+                      Design yours now.
+                    </p>
+                  </Link>
+                </div>
+                <Link
+                  href="/cases"
+                  className="group block focus:outline-none"
+                  aria-label="View Eurorack Cases"
+                >
+                  <div className="relative h-[24rem] w-full overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_28px_70px_rgba(0,0,0,0.3)] md:h-[30rem] lg:h-[34rem]">
+                    <img
+                      src="/images/brand/cases-img1.png"
+                      alt="Handcrafted Eurorack case in a workshop setting"
+                      className="h-full w-full object-cover object-center opacity-86 transition duration-500 group-hover:scale-[1.018] group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.06),rgba(12,8,6,0.22)),linear-gradient(90deg,rgba(14,9,7,0.18),transparent_46%,rgba(14,9,7,0.16))]" />
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+          </div>
+
+          <div id="workshop" className="mt-10 border-t border-[#8f5c32]/18 pt-7 md:mt-14 md:pt-8">
+            {workshopPosts.length > 0 ? (
+              <div className="mb-0">
+                <div className="mb-6 flex items-end justify-between gap-6">
+                  <div>
+                    <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/74">
+                      From the Workshop
+                    </p>
+                    <h2 className="[font-family:var(--font-inter)] mt-3 text-xl font-medium uppercase tracking-[0.16em] text-[#e2c8a2] md:text-2xl">
+                      Notes, builds, and process
+                    </h2>
+                  </div>
+                  <Link
+                    href="/workshop"
+                    className="[font-family:var(--font-inter)] hidden text-[0.58rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/78 transition-colors hover:text-[#e4c89e] sm:block"
+                  >
+                    View all
+                  </Link>
+                </div>
+                <div
+                  ref={workshopCarouselRef}
+                  className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-3"
+                >
+                  {workshopPosts.map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={`/workshop/${post.slug}`}
+                      className="group relative h-64 w-[78vw] max-w-[25rem] flex-shrink-0 snap-start overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_24px_62px_rgba(0,0,0,0.28)] sm:h-72 md:h-76 md:w-[26rem]"
+                    >
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        className="h-full w-full object-cover opacity-82 transition duration-500 group-hover:scale-[1.018] group-hover:opacity-96"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.05),rgba(12,8,6,0.72)),linear-gradient(90deg,rgba(14,9,7,0.18),transparent_50%,rgba(14,9,7,0.12))]" />
+                      <div className="absolute inset-x-0 bottom-0 p-6">
+                        {post.category ? (
+                          <p className="[font-family:var(--font-inter)] text-[0.55rem] font-medium uppercase tracking-[0.24em] text-[#d5a06a]/78">
+                            {post.category}
+                          </p>
+                        ) : null}
+                        <h3 className="[font-family:var(--font-inter)] mt-3 text-lg font-medium uppercase leading-snug tracking-[0.12em] text-[#f0dbc0]">
+                          {post.title}
+                        </h3>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                {workshopPosts.length > 1 ? (
+                  <div className="mt-3 flex justify-center gap-2" aria-label="Workshop carousel navigation">
+                    {workshopPosts.map((post, index) => (
+                      <button
+                        key={post.slug}
+                        type="button"
+                        onClick={() => scrollWorkshopTo(index)}
+                        aria-label={`Go to workshop post ${index + 1}`}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          activeWorkshopPost === index
+                            ? "w-6 bg-[#d5a06a]/78"
+                            : "w-1.5 bg-[#8f5c32]/38 hover:bg-[#d5a06a]/54"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+                <Link
+                  href="/workshop"
+                  className="[font-family:var(--font-inter)] mt-3 inline-block text-[0.58rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/78 transition-colors hover:text-[#e4c89e] sm:hidden"
+                >
+                  View all
+                </Link>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      {/* --- IN THE WILD --- */}
+      <section className="px-6 pb-10 pt-2 text-[#F5EBDD] md:px-10 md:pt-4 lg:px-14">
+        <div className="mx-auto max-w-7xl border-t border-[#8f5c32]/18 pt-5 md:pt-6">
+          <div className="mb-5">
+            <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/74">
+              Noisy owners
+            </p>
+            <h2 className="[font-family:var(--font-inter)] mt-3 text-xl font-medium uppercase tracking-[0.16em] text-[#e2c8a2] md:text-2xl">
+              In the Wild
+            </h2>
+          </div>
         </div>
 
-        <div className="relative w-full">
+        <div className="relative -mx-6 md:-mx-10 lg:-mx-14">
           <div
             ref={carouselRef}
-            className="overflow-x-auto scroll-smooth snap-x snap-mandatory flex gap-6 pb-4 no-scrollbar touch-pan-x"
+            className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-4 touch-pan-x md:px-10 lg:px-14"
           >
-            {items.map((item, i) => (
-              <a
+            {inTheWildCarouselItems.map((item, i) => (
+              <div
                 key={i}
-                href={item.link}
-                className="snap-center flex-shrink-0 relative w-[280px] md:w-[320px] h-[280px] md:h-[320px] rounded-lg overflow-hidden shadow-lg group transition-transform duration-300 ease-in-out active:scale-[0.98]"
+                className="group relative h-[18rem] w-[78vw] max-w-[25rem] flex-shrink-0 snap-start overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_24px_62px_rgba(0,0,0,0.28)] transition-transform duration-300 ease-in-out active:scale-[0.99] md:h-80 md:w-[26rem]"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
-                onTouchEnd={(e) => handleTouchEnd(e, item.link)}
+                onTouchEnd={handleTouchEnd}
               >
                 <img
-                  src={`/images/western-floral/${item.file}`}
+                  src={item.imageUrl}
                   alt={item.name}
                   draggable="false"
-                  className="w-full h-full object-cover pointer-events-none transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover opacity-82 transition duration-700 group-hover:scale-[1.018] group-hover:opacity-96"
                 />
-                <div className="absolute bottom-0 w-full bg-gradient-to-t from-[#1A1410]/60 via-transparent to-transparent py-4 text-center">
-                  <p
-                    className={`text-sm font-body tracking-wide ${
-                      item.tone === "light" ? "text-black" : "text-white"
-                    }`}
-                  >
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.02),rgba(12,8,6,0.58)),linear-gradient(90deg,rgba(14,9,7,0.14),transparent_52%,rgba(14,9,7,0.12))]" />
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="text-[0.56rem] font-medium uppercase tracking-[0.24em] text-[#d5a06a]/76">
+                    Noisy owner
+                  </p>
+                  <p className="mt-2 [font-family:var(--font-inter)] text-sm font-medium uppercase tracking-[0.14em] text-[#f0dbc0]">
                     {item.name}
                   </p>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
-
-          <button
-            onClick={() => scroll("left")}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-[#1A1410]/70 hover:bg-[#1A1410]/90 text-[#F5EBDD] p-3 rounded-full backdrop-blur-sm transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-[#1A1410]/70 hover:bg-[#1A1410]/90 text-[#F5EBDD] p-3 rounded-full backdrop-blur-sm transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="text-center mt-10">
-          <a
-            href="/shop"
-            className="inline-block bg-noisy-copper hover:bg-noisy-copper/80 text-white px-8 py-3 rounded-md transition-colors duration-300 font-body"
-          >
-            View All Cases
-          </a>
         </div>
       </section>
+      </div>
 
       {/* --- CONTACT MODAL --- */}
       {showContact && (
@@ -247,7 +425,7 @@ export default function Home() {
               onClick={() => setShowContact(false)}
               className="absolute top-3 right-3 text-[#E6D9C5]/60 hover:text-noisy-copper transition-colors text-lg"
             >
-              ✕
+              âœ•
             </button>
             <h2 className="text-2xl font-display mb-4 text-noisy-copper">Contact Me</h2>
             <form

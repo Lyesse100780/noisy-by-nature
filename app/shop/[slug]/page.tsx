@@ -31,7 +31,7 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <section className="bg-[#1A1410] text-[#F5EBDD] min-h-screen py-20 px-6 md:px-12 lg:px-20">
+      <section className="topographic-surface bg-[#1A1410] text-[#F5EBDD] min-h-screen py-20 px-6 md:px-12 lg:px-20">
         <div className="max-w-3xl mx-auto text-center py-40">
           <h2 className="text-2xl font-display text-[#E6D9C5]">
             Product not found
@@ -60,7 +60,7 @@ export default function ProductPage() {
   };
 
   return (
-    <section className="bg-[#1A1410] text-[#F5EBDD] min-h-screen py-20 px-6 md:px-12 lg:px-20 relative overflow-x-hidden">
+    <section className="topographic-surface bg-[#1A1410] text-[#F5EBDD] min-h-screen py-20 px-6 md:px-12 lg:px-20 relative overflow-x-hidden">
       {/* --- HEADER --- */}
       <header className="absolute top-0 left-0 w-full z-20 flex justify-between items-center px-8 py-6 backdrop-blur-sm bg-[#1A1410]/40">
         <Link

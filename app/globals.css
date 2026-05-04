@@ -76,6 +76,251 @@ body {
   scrollbar-width: none;
 }
 
+.nav-menu .nav-dropdown {
+  transform: translate(-50%, 0.25rem);
+}
+
+.nav-menu:hover .nav-dropdown,
+.nav-menu:focus-within .nav-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.topographic-surface {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.topographic-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 18% 18%, rgba(175, 95, 44, 0.1), transparent 24rem),
+    url("/images/brand/background-topography-v2.png"),
+    url("/images/brand/background-topography-v2.png");
+  background-position:
+    left top,
+    left -42rem top 4rem,
+    right -48rem bottom -5rem;
+  background-repeat: no-repeat;
+  background-size:
+    46rem 46rem,
+    92rem auto,
+    104rem auto;
+  filter: saturate(0.82) brightness(0.82);
+  mask-image: linear-gradient(180deg, transparent 0%, black 5%, black 96%, transparent 100%);
+  opacity: 0.055;
+  mix-blend-mode: screen;
+}
+
+.topographic-surface > * {
+  position: relative;
+}
+
+.newsletter-topography {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.newsletter-topography::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 48%, rgba(184, 108, 52, 0.12), transparent 22rem),
+    url("/images/brand/background-topography-v2.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 78rem auto;
+  filter: saturate(0.9) brightness(0.9);
+  opacity: 0.22;
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse at center, black 0%, black 42%, transparent 78%);
+}
+
+.newsletter-topography > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bespoke-range {
+  height: 2px;
+  appearance: none;
+  background: linear-gradient(90deg, rgba(213, 160, 106, 0.72), rgba(143, 92, 50, 0.22));
+  outline: none;
+}
+
+.bespoke-range::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  border: 1px solid rgba(213, 160, 106, 0.72);
+  border-radius: 999px;
+  background: #120c08;
+  box-shadow: 0 0 0 5px rgba(213, 160, 106, 0.08), 0 8px 20px rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+}
+
+.bespoke-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(213, 160, 106, 0.72);
+  border-radius: 999px;
+  background: #120c08;
+  box-shadow: 0 0 0 5px rgba(213, 160, 106, 0.08), 0 8px 20px rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+}
+
+.bespoke-preview-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.bespoke-preview-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 48% 42%, rgba(214, 160, 106, 0.12), transparent 22rem),
+    linear-gradient(135deg, rgba(255, 236, 198, 0.04), transparent 38%, rgba(0, 0, 0, 0.34));
+}
+
+.bespoke-preview-stage > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bespoke-case {
+  transform: none;
+  transition:
+    width 720ms cubic-bezier(0.65, 0, 0.35, 1),
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: width, transform;
+}
+
+.bespoke-case-shell {
+  position: relative;
+  transform: translateZ(0);
+  animation: tactileSnap 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition:
+    background-color 560ms cubic-bezier(0.65, 0, 0.35, 1),
+    border-color 560ms cubic-bezier(0.65, 0, 0.35, 1),
+    box-shadow 560ms cubic-bezier(0.65, 0, 0.35, 1),
+    filter 560ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.bespoke-case-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 207, 0.18),
+    inset 1px 0 0 rgba(255, 238, 207, 0.08),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.42),
+    inset -2px 0 2px rgba(0, 0, 0, 0.28);
+}
+
+.bespoke-rack-cavity {
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.82),
+    inset 0 2px 3px rgba(255, 238, 207, 0.045),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.58);
+}
+
+.bespoke-rack-cavity::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 28;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 238, 207, 0.035),
+    inset 0 10px 16px rgba(255, 238, 207, 0.025),
+    inset 0 -14px 18px rgba(0, 0, 0, 0.34);
+}
+
+.bespoke-rail {
+  transition:
+    background-color 520ms cubic-bezier(0.65, 0, 0.35, 1),
+    box-shadow 520ms cubic-bezier(0.65, 0, 0.35, 1),
+    filter 520ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.bespoke-rail::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 2px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 245, 225, 0.34), transparent);
+  opacity: 0.58;
+}
+
+.bespoke-preview-hotspot {
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.bespoke-preview-hotspot:focus-visible {
+  outline: 1px solid rgba(213, 160, 106, 0.72);
+  outline-offset: 2px;
+}
+
+@keyframes tactileSnap {
+  0% {
+    filter: brightness(0.96) saturate(0.96);
+    transform: translateY(1px) scale(0.996);
+  }
+  54% {
+    filter: brightness(1.02) saturate(1.01);
+    transform: translateY(-0.5px) scale(1.003);
+  }
+  100% {
+    filter: brightness(1) saturate(1);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.site-hero {
+  min-height: var(--hero-mobile-height, 8.5rem);
+}
+
+.site-hero__content {
+  min-height: calc(var(--hero-mobile-height, 8.5rem) - 68px);
+  margin-top: -2rem;
+  padding-top: 0;
+  padding-bottom: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .site-hero {
+    min-height: var(--hero-desktop-height, 23vh);
+  }
+
+  .site-hero__content {
+    min-height: calc(var(--hero-desktop-height, 23vh) - 72px);
+    margin-top: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 1.25rem;
+  }
+}
+
 @keyframes scroll-smooth {
   0% {
     transform: translateX(0);

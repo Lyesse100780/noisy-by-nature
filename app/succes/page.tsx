@@ -1,6 +1,6 @@
 export default function SuccessPage() {
   return (
-    <div className="min-h-screen bg-[#1A1410] text-[#F5EBDD] flex items-center justify-center px-6">
+    <div className="topographic-surface min-h-screen bg-[#1A1410] text-[#F5EBDD] flex items-center justify-center px-6">
       <div className="max-w-xl text-center space-y-4">
         <h1 className="text-3xl font-display text-noisy-copper">
           Payment successful
