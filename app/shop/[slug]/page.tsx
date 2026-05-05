@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { products } from "../../data/products";
+import AddToCartButton from "@/components/AddToCartButton";
+import { openNewsletterPopup } from "@/lib/newsletter";
+import { shopProducts } from "@/lib/shop-products";
 
 export default function ProductPage() {
   const params = useParams();
@@ -16,7 +18,7 @@ export default function ProductPage() {
 
   const product = useMemo(() => {
     if (!slug) return undefined;
-    return products.find((p) => p.slug === slug);
+    return shopProducts.find((p) => p.slug === slug);
   }, [slug]);
 
   // Safe media array
@@ -52,13 +54,6 @@ export default function ProductPage() {
     );
   }
 
-  const hasPaymentLink = typeof product.paymentLink === "string" && product.paymentLink.length > 0;
-
-  const handleBuy = () => {
-    if (!hasPaymentLink) return;
-    window.location.assign(product.paymentLink as string);
-  };
-
   return (
     <section className="topographic-surface bg-[#1A1410] text-[#F5EBDD] min-h-screen py-20 px-6 md:px-12 lg:px-20 relative overflow-x-hidden">
       {/* --- HEADER --- */}
@@ -77,11 +72,22 @@ export default function ProductPage() {
         <div className="flex flex-col items-center w-full">
           <div className="relative w-[100vw] md:w-full max-w-[min(100%,820px)] -mx-6 md:mx-0 rounded-lg overflow-hidden">
             {activeMedia ? (
-              <img
-                src={activeMedia}
-                alt={product.name}
-                className="block w-full h-auto max-h-[72vh] object-contain rounded-lg"
-              />
+              <div className="relative">
+                <img
+                  src={activeMedia}
+                  alt={product.name}
+                  className={`block w-full h-auto max-h-[72vh] object-contain rounded-lg ${
+                    product.stockQuantity === 0 ? "grayscale-[0.2]" : ""
+                  }`}
+                />
+                {product.stockQuantity === 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#0c0806]/28">
+                    <span className="border border-[#d5a06a]/46 bg-[#120c08]/78 px-6 py-2.5 font-body text-xs font-medium uppercase tracking-[0.28em] text-[#efd1a2] shadow-[0_18px_42px_rgba(0,0,0,0.42)]">
+                      Sold Out
+                    </span>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="w-full h-[50vh] flex items-center justify-center bg-[#201915] text-[#E6D9C5]/60">
                 No image available
@@ -119,6 +125,11 @@ export default function ProductPage() {
           <h1 className="text-4xl font-display text-noisy-copper mb-3">
             {product.name}
           </h1>
+          {product.stockQuantity === 0 && (
+            <p className="font-body text-xs font-medium uppercase tracking-[0.24em] text-noisy-copper/72">
+              Sold out archive
+            </p>
+          )}
 
           <p className="text-lg text-[#E6D9C5]/90 leading-relaxed whitespace-pre-line font-body">
             {product.description}
@@ -138,23 +149,41 @@ export default function ProductPage() {
 
           <p className="text-2xl font-semibold mb-6">{product.price}</p>
 
-          <button
-            type="button"
-            disabled={!hasPaymentLink}
-            onClick={handleBuy}
+          <div className="flex flex-wrap gap-3">
+          <AddToCartButton
+            slug={product.slug}
+            available={product.available}
+            maxQuantity={product.stockQuantity}
+            label="Add to Cart"
             className={`inline-block px-10 py-4 rounded-md transition-all duration-300 font-body text-sm tracking-widest uppercase shadow-md ${
-              hasPaymentLink
+              product.available && product.stockQuantity > 0
                 ? "bg-noisy-copper hover:bg-noisy-copper/80 text-white hover:shadow-copper/30"
                 : "bg-[#3a2f27] text-white/40 cursor-not-allowed opacity-60"
             }`}
-          >
-            Buy Now
-          </button>
+          />
+          {product.available && product.stockQuantity > 0 && (
+            <Link
+              href="/cart"
+              className="inline-block rounded-md border border-noisy-copper/50 px-10 py-4 font-body text-sm uppercase tracking-widest text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/10"
+            >
+              View Cart
+            </Link>
+          )}
+          </div>
 
-          {!hasPaymentLink && (
+          {(!product.available || product.stockQuantity < 1) && (
             <p className="text-sm text-[#E6D9C5]/60 font-body">
               This item isn’t available for online checkout. Please contact me for a custom order.
             </p>
+          )}
+          {product.slug === "fad3rs" && product.stockQuantity === 0 && (
+            <button
+              type="button"
+              onClick={openNewsletterPopup}
+              className="inline-block rounded-md border border-noisy-copper/50 px-8 py-3 font-body text-xs uppercase tracking-widest text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/10"
+            >
+              Notify me when available
+            </button>
           )}
         </div>
       </div>

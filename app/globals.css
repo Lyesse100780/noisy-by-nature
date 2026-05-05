@@ -80,6 +80,15 @@ body {
   transform: translate(-50%, 0.25rem);
 }
 
+.nav-menu::after {
+  content: "";
+  position: absolute;
+  left: -0.75rem;
+  right: -0.75rem;
+  top: 100%;
+  height: 1rem;
+}
+
 .nav-menu:hover .nav-dropdown,
 .nav-menu:focus-within .nav-dropdown {
   opacity: 1;
