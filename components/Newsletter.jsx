@@ -10,10 +10,10 @@ export default function Newsletter(props) {
   } = props;
   return (
     <section id={id} className="bg-transparent px-0 py-0">
-      <div className="bg-[#120c08]/28 px-6 py-5 md:px-10 md:py-6">
-        <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 text-center">
+      <div className="bg-[#120c08]/28 px-6 py-3 md:px-10 md:py-4">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-3 text-center">
           <div>
-            <p className="max-w-2xl text-[1rem] font-light leading-7 text-[#e6d9c5]/74 md:text-[1.05rem]">
+            <p className="max-w-2xl text-[0.88rem] font-light leading-6 text-[#e6d9c5]/74 md:text-[0.96rem]">
               {copy}
             </p>
           </div>
@@ -31,7 +31,7 @@ export default function Newsletter(props) {
                       align-items:center;
                       justify-content:center;
                       min-width:220px;
-                      padding:13px 18px;
+                      padding:11px 16px;
                       border:1px solid rgba(198, 144, 84, 0.42);
                       background:rgba(18, 12, 8, 0.22);
                       color:#d5a06a;
@@ -53,7 +53,7 @@ export default function Newsletter(props) {
               }}
             />
           </div>
-          <p className="-mt-2 text-xs text-[#8a7965]">
+          <p className="-mt-1 text-xs text-[#8a7965]">
             no spams — only handcrafted news.
           </p>
         </div>

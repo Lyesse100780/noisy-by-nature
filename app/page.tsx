@@ -139,7 +139,7 @@ export default function Home() {
       {/* --- HERO SECTION --- */}
       <section
         id="hero"
-        className="site-hero relative w-full overflow-hidden bg-[#100b08] text-[#f4ead8] [--hero-desktop-height:23vh] [--hero-mobile-height:8.25rem] max-[460px]:[--hero-mobile-height:10.25rem]"
+        className="site-hero relative w-full overflow-hidden bg-[#100b08] text-[#f4ead8] [--hero-desktop-height:18vh] [--hero-mobile-height:6.35rem] max-[460px]:[--hero-mobile-height:6.8rem]"
       >
         <div
           className="absolute inset-0 bg-cover bg-center opacity-100"
@@ -150,24 +150,19 @@ export default function Home() {
 
         <SiteNav onContact={() => setShowContact(true)} joinHref="#join-list" showHomeInMobileMenu={false} />
 
-        <div className="site-hero__content relative z-10 mx-auto flex w-full max-w-7xl translate-y-3 items-center justify-center px-6 md:translate-y-0 md:px-10 lg:px-14">
+        <div className="site-hero__content relative z-10 mx-auto flex w-full max-w-7xl translate-y-5 items-center justify-center px-6 md:translate-y-0 md:px-10 lg:px-14">
           <div className="text-center">
             <h1
               className="[font-family:var(--font-playfair)] font-medium uppercase leading-none tracking-[0.18em] text-[rgba(219,198,168,0.92)] [text-shadow:0_1px_0_rgba(255,238,207,0.08),0_-1px_0_rgba(0,0,0,0.72),0_10px_26px_rgba(0,0,0,0.45)] [-webkit-text-stroke:0.18px_rgba(255,236,202,0.08)]"
             >
-              <span className="block whitespace-nowrap text-[clamp(1.72rem,5vw,4.65rem)] max-[460px]:hidden md:text-[clamp(2rem,5vw,4.65rem)]">
+              <span className="block whitespace-nowrap text-[clamp(1rem,6.35vw,3.25rem)] tracking-[0.14em] md:text-[clamp(1.5rem,3.8vw,3.4rem)] md:tracking-[0.18em]">
                 Noisy by Nature
-              </span>
-              <span className="hidden text-[clamp(1.45rem,8.6vw,2.1rem)] max-[460px]:flex max-[460px]:flex-col max-[460px]:items-center max-[460px]:gap-0.5">
-                <span>Noisy</span>
-                <span className="text-[0.42em] lowercase tracking-[0.14em] text-[#d5a06a]/88">by</span>
-                <span>Nature</span>
               </span>
             </h1>
             <div className="mx-auto mt-3 flex w-full max-w-[min(86vw,44rem)] items-center justify-center gap-3 text-[#c38a50]/70 md:mt-4 md:gap-4">
               <span className="hidden h-px flex-1 bg-current opacity-40 sm:block" />
               <span className="h-1 w-1 rounded-full bg-current opacity-70" />
-              <p className="[font-family:var(--font-inter)] whitespace-nowrap text-[clamp(0.48rem,1.35vw,0.68rem)] font-medium uppercase leading-none tracking-[0.24em] text-[#d5a06a]/88">
+              <p className="[font-family:var(--font-inter)] whitespace-nowrap text-[clamp(0.42rem,1.1vw,0.6rem)] font-medium uppercase leading-none tracking-[0.22em] text-[#d5a06a]/88">
                 Handcrafted Tools for Expressive Creators
               </p>
               <span className="h-1 w-1 rounded-full bg-current opacity-70" />
@@ -179,11 +174,11 @@ export default function Home() {
 
       {/* --- PRODUCT ECOSYSTEM --- */}
       <div className="topographic-surface bg-[#1A1410]">
-      <section id="controllers" className="text-[#F5EBDD] px-6 pb-18 pt-10 md:px-12 md:pb-24 md:pt-12 lg:px-20">
+      <section id="controllers" className="text-[#F5EBDD] px-6 pb-18 pt-5 md:px-12 md:pb-24 md:pt-10 lg:px-20">
         <div className="mx-auto max-w-7xl">
-          <div className="space-y-16 md:space-y-20">
-            <div className="border-t border-[#8f5c32]/18 pt-10">
-              <div className="mb-8 md:mb-10">
+          <div className="space-y-10 md:space-y-14">
+            <div className="border-t border-[#8f5c32]/18 pt-6 md:pt-10">
+              <div className="mb-6 md:mb-10">
                 <p className="[font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
                   Controllers
                 </p>
@@ -192,7 +187,7 @@ export default function Home() {
                 <Link
                   id="fad3rs"
                   href="/fad3rs"
-                  className="group grid gap-9 focus:outline-none min-[720px]:grid-cols-[0.42fr_0.58fr] min-[720px]:items-center min-[720px]:gap-7 min-[980px]:grid-cols-[0.48fr_0.52fr] min-[980px]:gap-10 lg:grid-cols-[0.52fr_0.48fr] lg:gap-18"
+                  className="group grid gap-7 focus:outline-none min-[720px]:grid-cols-[0.42fr_0.58fr] min-[720px]:items-center min-[720px]:gap-7 min-[980px]:grid-cols-[0.48fr_0.52fr] min-[980px]:gap-10 lg:grid-cols-[0.52fr_0.48fr] lg:gap-18"
                   aria-label="View FAD3RS"
                 >
                   <div className="relative h-[30rem] w-full overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_30px_76px_rgba(0,0,0,0.34)] min-[720px]:h-[30rem] min-[980px]:h-[34rem] lg:h-[40rem]">
@@ -203,12 +198,11 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.01),rgba(12,8,6,0.18)),linear-gradient(90deg,rgba(14,9,7,0.2),transparent_42%,rgba(14,9,7,0.18))]" />
                   </div>
-                  <div className="min-[720px]:py-4 min-[980px]:py-8 lg:py-12">
-                    <p className="[font-family:var(--font-inter)] mb-3 text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/78">
-                      New release
-                    </p>
-                    <h3 className="[font-family:var(--font-inter)] text-[clamp(2.4rem,5.7vw,5.45rem)] font-semibold uppercase leading-none tracking-[0.18em] text-[#d8b98c] [font-variant-numeric:tabular-nums] transition-colors duration-300 group-hover:text-[#e4c89e] lg:text-[clamp(3rem,7.6vw,6.4rem)]">
-                      FAD3RS
+                  <div className="min-[720px]:py-3 min-[980px]:py-6 lg:py-10">
+                    <h3 className="text-[clamp(1.42rem,3.5vw,3.15rem)] font-semibold uppercase leading-none tracking-[0.15em] text-[#dbc6a8] transition-colors duration-300 group-hover:text-[#e4c89e] lg:text-[clamp(2rem,4.45vw,3.9rem)]">
+                      <span className="[font-family:var(--font-playfair)] font-medium">FAD</span>
+                      <span className="[font-family:var(--font-inter)] [font-variant-numeric:tabular-nums]">3</span>
+                      <span className="[font-family:var(--font-playfair)] font-medium">RS</span>
                     </h3>
                     <p className="mt-5 max-w-xl text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/78 md:text-base min-[980px]:text-lg">
                       A class-compliant MIDI controller built around three 100mm Alps faders for expressive automation and precise control.
@@ -216,7 +210,7 @@ export default function Home() {
                     <p className="mt-4 max-w-xl text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/70 md:text-base min-[980px]:text-lg">
                       Designed for composers, sound designers, and tactile workflows where drawing curves with a mouse breaks the musical flow.
                     </p>
-                    <p className="[font-family:var(--font-inter)] mt-7 text-xs font-medium uppercase tracking-[0.24em] text-[#d5a06a]/86">
+                    <p className="[font-family:var(--font-inter)] mt-5 text-xs font-medium uppercase tracking-[0.24em] text-[#d5a06a]/86">
                       Stop clicking. Start drawing.
                     </p>
                   </div>
@@ -224,11 +218,11 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="border-y border-[#8f5c32]/18 py-4 md:py-5">
+            <div className="border-y border-[#8f5c32]/18 py-2 md:py-3">
               <Newsletter id="join-list" />
             </div>
 
-            <div className="-mt-10 pt-4 md:-mt-12 md:pt-5">
+            <div className="-mt-12 pt-3 md:-mt-14 md:pt-4">
               <div className="mb-5 md:mb-6">
                 <p className="[font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
                   Cases
@@ -311,34 +305,36 @@ export default function Home() {
                     View all
                   </Link>
                 </div>
-                <div
-                  ref={workshopCarouselRef}
-                  className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-3"
-                >
-                  {workshopPosts.map((post) => (
-                    <Link
-                      key={post.slug}
-                      href={`/workshop/${post.slug}`}
-                      className="group relative h-64 w-[78vw] max-w-[25rem] flex-shrink-0 snap-start overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_24px_62px_rgba(0,0,0,0.28)] sm:h-72 md:h-76 md:w-[26rem]"
-                    >
-                      <img
-                        src={post.imageUrl}
-                        alt={post.title}
-                        className="h-full w-full object-cover opacity-82 transition duration-500 group-hover:scale-[1.018] group-hover:opacity-96"
-                      />
-                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.05),rgba(12,8,6,0.72)),linear-gradient(90deg,rgba(14,9,7,0.18),transparent_50%,rgba(14,9,7,0.12))]" />
-                      <div className="absolute inset-x-0 bottom-0 p-6">
-                        {post.category ? (
-                          <p className="[font-family:var(--font-inter)] text-[0.55rem] font-medium uppercase tracking-[0.24em] text-[#d5a06a]/78">
-                            {post.category}
-                          </p>
-                        ) : null}
-                        <h3 className="[font-family:var(--font-inter)] mt-3 text-lg font-medium uppercase leading-snug tracking-[0.12em] text-[#f0dbc0]">
-                          {post.title}
-                        </h3>
-                      </div>
-                    </Link>
-                  ))}
+                <div className="relative -mx-6 sm:mx-0">
+                  <div
+                    ref={workshopCarouselRef}
+                    className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-3 touch-pan-x sm:gap-6 sm:px-0"
+                  >
+                    {workshopPosts.map((post) => (
+                      <Link
+                        key={post.slug}
+                        href={`/workshop/${post.slug}`}
+                        className="group relative h-[17rem] w-[84vw] max-w-none flex-shrink-0 snap-center overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_24px_62px_rgba(0,0,0,0.28)] sm:h-72 sm:w-[25rem] sm:snap-start md:h-76 md:w-[26rem]"
+                      >
+                        <img
+                          src={post.imageUrl}
+                          alt={post.title}
+                          className="h-full w-full object-cover opacity-82 transition duration-500 group-hover:scale-[1.018] group-hover:opacity-96"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.05),rgba(12,8,6,0.76)),linear-gradient(90deg,rgba(14,9,7,0.18),transparent_50%,rgba(14,9,7,0.12))]" />
+                        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                          {post.category ? (
+                            <p className="[font-family:var(--font-inter)] text-[0.52rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/78 sm:text-[0.55rem] sm:tracking-[0.24em]">
+                              {post.category}
+                            </p>
+                          ) : null}
+                          <h3 className="[font-family:var(--font-inter)] mt-3 text-base font-medium uppercase leading-snug tracking-[0.11em] text-[#f0dbc0] sm:text-lg sm:tracking-[0.12em]">
+                            {post.title}
+                          </h3>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
                 {workshopPosts.length > 1 ? (
                   <div className="mt-3 flex justify-center gap-2" aria-label="Workshop carousel navigation">

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Instagram, Mail, Menu, ShoppingCart, X, Youtube } from "lucide-react";
+import { readCart } from "@/lib/cart";
 
 type SiteNavProps = {
   onContact?: () => void;
@@ -21,6 +23,27 @@ export default function SiteNav({
   showHomeInMobileMenu = true,
 }: SiteNavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      setCartCount(readCart().reduce((total, item) => total + item.quantity, 0));
+    };
+
+    updateCartCount();
+    window.addEventListener("cart:updated", updateCartCount);
+    window.addEventListener("storage", updateCartCount);
+
+    return () => {
+      window.removeEventListener("cart:updated", updateCartCount);
+      window.removeEventListener("storage", updateCartCount);
+    };
+  }, []);
 
   const handleContact = () => {
     setMenuOpen(false);
@@ -31,7 +54,62 @@ export default function SiteNav({
     window.location.href = contactHref;
   };
 
+  const mobileMenu = (
+    <div
+      className={`lg:hidden ${
+        menuOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
+      } fixed left-6 top-[4.25rem] z-[9999] w-[min(21rem,calc(100vw-3rem))] border border-[#8f5c32]/20 bg-[#120c08]/96 px-5 py-4 shadow-[0_18px_42px_rgba(0,0,0,0.5)] backdrop-blur-md transition duration-150 ease-out`}
+    >
+      <nav className="flex flex-col gap-3 text-[0.66rem] uppercase tracking-[0.22em] text-[#d9ad75]/82">
+        {showHomeInMobileMenu ? (
+          <Link href="/" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+            Home
+          </Link>
+        ) : null}
+        <Link href="/shop" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+          Shop
+        </Link>
+        <div className="flex flex-col gap-2">
+          <Link href="/#controllers" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+            Controllers
+          </Link>
+          <div className="ml-4 flex flex-col gap-2 border-l border-[#8f5c32]/20 pl-4 text-[0.58rem] tracking-[0.2em] text-[#d9ad75]/68">
+            <Link href="/fad3rs" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+              FAD3RS
+            </Link>
+            <Link href="/mast3r" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+              MAST3R
+            </Link>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Link href="/shop/cases" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+            Cases
+          </Link>
+          <div className="ml-4 flex flex-col gap-2 border-l border-[#8f5c32]/20 pl-4 text-[0.58rem] tracking-[0.2em] text-[#d9ad75]/68">
+            <Link href="/shop/cases" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+              In Stock Cases
+            </Link>
+            <Link href="/bespoke" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+              Bespoke
+            </Link>
+          </div>
+        </div>
+        <Link href="/#modules" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+          Modules
+        </Link>
+        <Link href="/workshop" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+          Workshop
+        </Link>
+        <Link href={joinHref} onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
+          Join List
+        </Link>
+      </nav>
+    </div>
+  );
+
   return (
+    <>
     <header className="relative z-[80] mx-auto w-full max-w-7xl px-6 py-3 md:px-10 lg:px-14 lg:py-5">
       <div className="hidden items-center justify-between gap-6 lg:flex">
         <nav className="flex items-center gap-4 text-[0.58rem] uppercase tracking-[0.22em] text-[#d6a066]/76 md:gap-7 md:text-[0.62rem]">
@@ -80,8 +158,13 @@ export default function SiteNav({
         </nav>
 
         <nav className="flex items-center gap-3 whitespace-nowrap text-[0.56rem] uppercase tracking-[0.18em] text-[#d6a066]/76 md:gap-5 md:text-[0.6rem]">
-          <Link href="/cart" aria-label="Cart" className="transition-colors hover:text-[#d6b071]">
+          <Link href="/cart" aria-label="Cart" className="relative transition-colors hover:text-[#d6b071]">
             <ShoppingCart className="h-3.5 w-3.5" strokeWidth={1.65} />
+            {cartCount > 0 && (
+              <span className="absolute -right-2.5 -top-2 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#9f2d24] px-1 text-[0.42rem] font-semibold leading-none tracking-[-0.01em] text-[#fff4e6] shadow-[0_0_10px_rgba(159,45,36,0.42)]">
+                {cartCount}
+              </span>
+            )}
           </Link>
           <Link href={joinHref} className="transition-colors hover:text-[#d6b071]">
             Join List
@@ -124,8 +207,13 @@ export default function SiteNav({
         <div aria-hidden="true" />
 
         <div className="flex items-center justify-end gap-3 text-[0.56rem] uppercase tracking-[0.18em] text-[#d6a066]/78">
-          <Link href="/shop" aria-label="Shop" className="transition-colors hover:text-[#d6b071]">
+          <Link href="/cart" aria-label="Cart" className="relative transition-colors hover:text-[#d6b071]">
             <ShoppingCart className="h-3.5 w-3.5" strokeWidth={1.65} />
+            {cartCount > 0 && (
+              <span className="absolute -right-2.5 -top-2 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#9f2d24] px-1 text-[0.42rem] font-semibold leading-none tracking-[-0.01em] text-[#fff4e6] shadow-[0_0_10px_rgba(159,45,36,0.42)]">
+                {cartCount}
+              </span>
+            )}
           </Link>
           <a href={instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram" className="transition-colors hover:text-[#d6b071]">
             <Instagram className="h-3.5 w-3.5" strokeWidth={1.6} />
@@ -145,57 +233,8 @@ export default function SiteNav({
         </div>
       </div>
 
-      <div
-        className={`lg:hidden ${
-          menuOpen ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
-        } fixed left-6 top-[3.65rem] z-[100] w-[min(21rem,calc(100vw-3rem))] border border-[#8f5c32]/20 bg-[#120c08]/96 px-5 py-4 shadow-[0_18px_42px_rgba(0,0,0,0.38)] backdrop-blur-md transition duration-150 ease-out`}
-      >
-        <nav className="flex flex-col gap-3 text-[0.66rem] uppercase tracking-[0.22em] text-[#d9ad75]/82">
-          {showHomeInMobileMenu ? (
-            <Link href="/" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-              Home
-            </Link>
-          ) : null}
-          <Link href="/shop" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-            Shop
-          </Link>
-          <div className="flex flex-col gap-2">
-            <Link href="/#controllers" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-              Controllers
-            </Link>
-            <div className="ml-4 flex flex-col gap-2 border-l border-[#8f5c32]/20 pl-4 text-[0.58rem] tracking-[0.2em] text-[#d9ad75]/68">
-              <Link href="/fad3rs" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-                FAD3RS
-              </Link>
-              <Link href="/mast3r" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-                MAST3R
-              </Link>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Link href="/shop/cases" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-              Cases
-            </Link>
-            <div className="ml-4 flex flex-col gap-2 border-l border-[#8f5c32]/20 pl-4 text-[0.58rem] tracking-[0.2em] text-[#d9ad75]/68">
-              <Link href="/shop/cases" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-                In Stock Cases
-              </Link>
-              <Link href="/bespoke" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-                Bespoke
-              </Link>
-            </div>
-          </div>
-          <Link href="/#modules" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-            Modules
-          </Link>
-          <Link href="/workshop" onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-            Workshop
-          </Link>
-          <Link href={joinHref} onClick={() => setMenuOpen(false)} className="transition-colors hover:text-[#efd1a2]">
-            Join List
-          </Link>
-        </nav>
-      </div>
     </header>
+    {mounted ? createPortal(mobileMenu, document.body) : null}
+    </>
   );
 }
