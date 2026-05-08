@@ -1,5 +1,7 @@
 "use client";
 
+import { openNewsletterPopup } from "@/lib/newsletter";
+
 /**
  * @param {{ id?: string, copy?: string }} props
  */
@@ -19,39 +21,13 @@ export default function Newsletter(props) {
           </div>
 
           <div className="flex justify-center">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: `
-                  <a
-                    class="ml-onclick-form"
-                    href="javascript:void(0)"
-                    onclick="ml('show', 'eWb4s9', true)"
-                    style="
-                      display:inline-flex;
-                      align-items:center;
-                      justify-content:center;
-                      min-width:220px;
-                      padding:11px 16px;
-                      border:1px solid rgba(198, 144, 84, 0.42);
-                      background:rgba(18, 12, 8, 0.22);
-                      color:#d5a06a;
-                      font-family:var(--font-inter);
-                      font-weight:500;
-                      font-size:11px;
-                      letter-spacing:0.22em;
-                      text-transform:uppercase;
-                      text-align:center;
-                      text-decoration:none;
-                      transition:border-color 0.22s ease, color 0.22s ease, background 0.22s ease;
-                    "
-                    onmouseover="this.style.borderColor='rgba(213,160,106,0.7)';this.style.color='#efd1a2';this.style.background='rgba(18,12,8,0.42)'"
-                    onmouseout="this.style.borderColor='rgba(198,144,84,0.42)';this.style.color='#d5a06a';this.style.background='rgba(18,12,8,0.22)'"
-                  >
-                    Join the mailing list
-                  </a>
-                `,
-              }}
-            />
+            <button
+              type="button"
+              onClick={openNewsletterPopup}
+              className="inline-flex min-w-[220px] items-center justify-center border border-[#c69054]/42 bg-[#120c08]/22 px-4 py-[11px] text-center [font-family:var(--font-inter)] text-[11px] font-medium uppercase tracking-[0.22em] text-[#d5a06a] transition hover:border-[#d5a06a]/70 hover:bg-[#120c08]/42 hover:text-[#efd1a2]"
+            >
+              Join the mailing list
+            </button>
           </div>
           <p className="-mt-1 text-xs text-[#8a7965]">
             no spams — only handcrafted news.

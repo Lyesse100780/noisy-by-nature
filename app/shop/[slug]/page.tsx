@@ -121,15 +121,10 @@ export default function ProductPage() {
         </div>
 
         {/* --- DESCRIPTION & BUY --- */}
-        <div className="space-y-8 pt-4">
-          <h1 className="text-4xl font-display text-noisy-copper mb-3">
+        <div className="space-y-4 pt-4">
+          <h1 className="text-3xl font-display text-noisy-copper mb-3">
             {product.name}
           </h1>
-          {product.stockQuantity === 0 && (
-            <p className="font-body text-xs font-medium uppercase tracking-[0.24em] text-noisy-copper/72">
-              Sold out archive
-            </p>
-          )}
 
           <p className="text-lg text-[#E6D9C5]/90 leading-relaxed whitespace-pre-line font-body">
             {product.description}
@@ -147,7 +142,12 @@ export default function ProductPage() {
             </div>
           )}
 
-          <p className="text-2xl font-semibold mb-6">{product.price}</p>
+          <div className="flex items-baseline gap-4 mb-4">
+            <p className="text-2xl font-semibold text-noisy-copper">{product.price}</p>
+            {product.slug === "fad3rs" && (
+              <p className="text-lg text-[#E6D9C5]/50 line-through">EUR 229</p>
+            )}
+          </div>
 
           <div className="flex flex-wrap gap-3">
           <AddToCartButton
@@ -172,15 +172,13 @@ export default function ProductPage() {
           </div>
 
           {(!product.available || product.stockQuantity < 1) && (
-            <p className="text-sm text-[#E6D9C5]/60 font-body">
-              This item isn’t available for online checkout. Please contact me for a custom order.
-            </p>
+            <></>
           )}
           {product.slug === "fad3rs" && product.stockQuantity === 0 && (
             <button
               type="button"
-              onClick={openNewsletterPopup}
-              className="inline-block rounded-md border border-noisy-copper/50 px-8 py-3 font-body text-xs uppercase tracking-widest text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/10"
+              onClick={() => openNewsletterPopup("fad3rs")}
+              className="inline-block rounded-md border border-noisy-copper/60 px-8 py-3 font-body text-xs uppercase tracking-[0.2em] text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/8 hover:border-noisy-copper/80"
             >
               Notify me when available
             </button>
