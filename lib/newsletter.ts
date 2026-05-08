@@ -1,17 +1,36 @@
 type MailerLiteWindow = Window & {
   ml?: (action: "show", formId: string, force: boolean) => void;
+  notifyPopupOpen?: (product: string) => void;
 };
 
-export function openNewsletterPopup() {
+const defaultFormId = "eWb4s9";
+
+export function openNewsletterPopup(): void;
+export function openNewsletterPopup(notifyProductKey: string): void;
+export function openNewsletterPopup(arg?: unknown) {
   if (typeof window === "undefined") return;
 
+  const product = typeof arg === "string" && arg.length > 0 ? arg : undefined;
+
+  // If product is specified, use the custom notify popup
+  if (product) {
+    const mailerLite = window as MailerLiteWindow;
+    if (typeof mailerLite.notifyPopupOpen === "function") {
+      mailerLite.notifyPopupOpen(product);
+      return;
+    }
+    console.warn("Notify popup not available");
+    return;
+  }
+
+  // Otherwise use default MailerLite form
   let attempts = 0;
 
   const tryOpen = () => {
     const mailerLite = window as MailerLiteWindow;
 
     if (typeof mailerLite.ml === "function") {
-      mailerLite.ml("show", "eWb4s9", true);
+      mailerLite.ml("show", defaultFormId, true);
       return;
     }
 

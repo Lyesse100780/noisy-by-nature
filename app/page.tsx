@@ -7,23 +7,10 @@ import SiteNav from "@/components/SiteNav";
 import { isSanityConfigured, sanityClient } from "@/lib/sanity/client";
 import {
   featuredWorkshopPostsQuery,
+  inTheWildItemsQuery,
+  type InTheWildItem,
   type WorkshopPostSummary,
 } from "@/lib/sanity/queries";
-
-type CarouselItem = {
-  imageUrl?: string;
-  name: string;
-  tone: "dark" | "light";
-};
-
-const inTheWildItems: CarouselItem[] = [
-  { imageUrl: "/images/in-the-wild/my-case.jpeg", name: "Studio case", tone: "dark" },
-  { imageUrl: "/images/in-the-wild/attif-case.jpeg", name: "Patch in progress", tone: "dark" },
-  { imageUrl: "/images/in-the-wild/maxime-faders.jpeg", name: "FAD3RS in session", tone: "dark" },
-  { imageUrl: "/images/in-the-wild/the-unperson-mini-case.jpeg", name: "Mini case", tone: "dark" },
-];
-
-const inTheWildCarouselItems = [...inTheWildItems, ...inTheWildItems];
 
 const mapFeaturedWorkshopPosts = (posts: WorkshopPostSummary[]) =>
   posts.filter((post) => post.title && post.slug && post.imageUrl);
@@ -31,30 +18,14 @@ const mapFeaturedWorkshopPosts = (posts: WorkshopPostSummary[]) =>
 export default function Home() {
   const [showContact, setShowContact] = useState(false);
   const [workshopPosts, setWorkshopPosts] = useState<WorkshopPostSummary[]>([]);
+  const [inTheWildItems, setInTheWildItems] = useState<InTheWildItem[]>([]);
   const [activeWorkshopPost, setActiveWorkshopPost] = useState(0);
-  const carouselRef = useRef<HTMLDivElement | null>(null);
   const workshopCarouselRef = useRef<HTMLDivElement | null>(null);
-  const scrollInterval = useRef<number | null>(null);
-  const touchStartX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
-
-  // --- AUTO-SCROLL DESKTOP ---
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    let pos = 0;
-    const step = () => {
-      pos += 0.42;
-      const resetPoint = el.scrollWidth / 2;
-      if (pos >= resetPoint) pos = 0;
-      el.scrollLeft = pos;
-      scrollInterval.current = requestAnimationFrame(step);
-    };
-    scrollInterval.current = requestAnimationFrame(step);
-    return () => {
-      if (scrollInterval.current) cancelAnimationFrame(scrollInterval.current);
-    };
-  }, []);
+  const inTheWildCarouselRef = useRef<HTMLDivElement | null>(null);
+  const inTheWildAutoScrollFrameRef = useRef<number | null>(null);
+  const inTheWildAutoScrollPausedRef = useRef(false);
+  const inTheWildAutoScrollEnabledRef = useRef(false);
+  const inTheWildResumeTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const el = workshopCarouselRef.current;
@@ -95,16 +66,22 @@ export default function Home() {
 
     const loadSanityContent = async () => {
       try {
-        const featuredPosts = await client.fetch<WorkshopPostSummary[]>(featuredWorkshopPostsQuery);
+        const [featuredPosts, wildItems] = await Promise.all([
+          client.fetch<WorkshopPostSummary[]>(featuredWorkshopPostsQuery),
+          client.fetch<InTheWildItem[]>(inTheWildItemsQuery),
+        ]);
 
         if (ignore) return;
 
         const sanityWorkshopPosts = mapFeaturedWorkshopPosts(featuredPosts || []);
+        const sanityInTheWildItems = (wildItems || []).filter((item) => item.caption && item.imageUrl);
 
         setWorkshopPosts(sanityWorkshopPosts);
+        setInTheWildItems(sanityInTheWildItems);
       } catch {
         if (!ignore) {
           setWorkshopPosts([]);
+          setInTheWildItems([]);
         }
       }
     };
@@ -116,23 +93,123 @@ export default function Home() {
     };
   }, []);
 
-  // --- TOUCH INTERACTIONS MOBILE ---
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    e.currentTarget.classList.add("scale-[1.03]");
-  };
+  useEffect(() => {
+    const el = inTheWildCarouselRef.current;
+    if (!el || inTheWildItems.length < 2) return;
 
-  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-    const dx = Math.abs((e.changedTouches[0].clientX ?? 0) - (touchStartX.current ?? 0));
-    const dy = Math.abs((e.changedTouches[0].clientY ?? 0) - (touchStartY.current ?? 0));
-    e.currentTarget.classList.remove("scale-[1.03]");
-    if (dx > 10 || dy > 10) e.preventDefault();
-  };
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.currentTarget.classList.remove("scale-[1.03]");
-  };
+    const setAutoScrollState = () => {
+      inTheWildAutoScrollEnabledRef.current = !mediaQuery.matches && !reducedMotionQuery.matches;
+    };
+
+    const stop = () => {
+      if (inTheWildAutoScrollFrameRef.current !== null) {
+        cancelAnimationFrame(inTheWildAutoScrollFrameRef.current);
+        inTheWildAutoScrollFrameRef.current = null;
+      }
+    };
+
+    const scheduleResume = (delayMs = 1400) => {
+      if (inTheWildResumeTimerRef.current !== null) {
+        window.clearTimeout(inTheWildResumeTimerRef.current);
+      }
+      inTheWildResumeTimerRef.current = window.setTimeout(() => {
+        inTheWildAutoScrollPausedRef.current = false;
+      }, delayMs);
+    };
+
+    const pauseForManualControl = (delayMs = 1400) => {
+      inTheWildAutoScrollPausedRef.current = true;
+      scheduleResume(delayMs);
+    };
+
+    const run = () => {
+      if (!inTheWildAutoScrollEnabledRef.current) return;
+      let direction = 1;
+
+      const tick = () => {
+        if (!inTheWildCarouselRef.current || !inTheWildAutoScrollEnabledRef.current) return;
+
+        if (!inTheWildAutoScrollPausedRef.current) {
+          const carousel = inTheWildCarouselRef.current;
+          const maxScrollLeft = Math.max(0, carousel.scrollWidth - carousel.clientWidth);
+
+          if (maxScrollLeft > 0) {
+            carousel.scrollLeft += 0.32 * direction;
+
+            if (carousel.scrollLeft >= maxScrollLeft - 2) {
+              direction = -1;
+            } else if (carousel.scrollLeft <= 2) {
+              direction = 1;
+            }
+          }
+        }
+
+        inTheWildAutoScrollFrameRef.current = requestAnimationFrame(tick);
+      };
+
+      inTheWildAutoScrollFrameRef.current = requestAnimationFrame(tick);
+    };
+
+    const onMouseEnter = () => {
+      inTheWildAutoScrollPausedRef.current = true;
+    };
+
+    const onMouseLeave = () => {
+      scheduleResume(300);
+    };
+
+    const onPointerDown = () => {
+      pauseForManualControl(1800);
+    };
+
+    const onPointerUp = () => {
+      scheduleResume(1200);
+    };
+
+    const onTouchStart = () => {
+      pauseForManualControl(1800);
+    };
+
+    const onTouchEnd = () => {
+      scheduleResume(1400);
+    };
+
+    const onModeChange = () => {
+      setAutoScrollState();
+      stop();
+      run();
+    };
+
+    setAutoScrollState();
+    run();
+
+    el.addEventListener("mouseenter", onMouseEnter);
+    el.addEventListener("mouseleave", onMouseLeave);
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("pointerup", onPointerUp);
+    mediaQuery.addEventListener("change", onModeChange);
+    reducedMotionQuery.addEventListener("change", onModeChange);
+
+    return () => {
+      stop();
+      el.removeEventListener("mouseenter", onMouseEnter);
+      el.removeEventListener("mouseleave", onMouseLeave);
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("pointerup", onPointerUp);
+      mediaQuery.removeEventListener("change", onModeChange);
+      reducedMotionQuery.removeEventListener("change", onModeChange);
+      if (inTheWildResumeTimerRef.current !== null) {
+        window.clearTimeout(inTheWildResumeTimerRef.current);
+      }
+    };
+  }, [inTheWildItems]);
 
   return (
     <>
@@ -174,7 +251,7 @@ export default function Home() {
 
       {/* --- PRODUCT ECOSYSTEM --- */}
       <div className="topographic-surface bg-[#1A1410]">
-      <section id="controllers" className="text-[#F5EBDD] px-6 pb-18 pt-5 md:px-12 md:pb-24 md:pt-10 lg:px-20">
+      <section id="controllers" className="text-[#F5EBDD] px-6 pb-16 pt-2 md:px-12 md:pb-24 md:pt-10 lg:px-20">
         <div className="mx-auto max-w-7xl">
           <div className="space-y-10 md:space-y-14">
             <div className="border-t border-[#8f5c32]/18 pt-6 md:pt-10">
@@ -190,7 +267,7 @@ export default function Home() {
                   className="group grid gap-7 focus:outline-none min-[720px]:grid-cols-[0.42fr_0.58fr] min-[720px]:items-center min-[720px]:gap-7 min-[980px]:grid-cols-[0.48fr_0.52fr] min-[980px]:gap-10 lg:grid-cols-[0.52fr_0.48fr] lg:gap-18"
                   aria-label="View FAD3RS"
                 >
-                  <div className="relative h-[30rem] w-full overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_30px_76px_rgba(0,0,0,0.34)] min-[720px]:h-[30rem] min-[980px]:h-[34rem] lg:h-[40rem]">
+                  <div className="relative h-[22rem] w-full overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_30px_76px_rgba(0,0,0,0.34)] min-[720px]:h-[30rem] min-[980px]:h-[34rem] lg:h-[40rem]">
                     <img
                       src="/images/brand/fad3rs-img1.png"
                       alt="FAD3RS MIDI controller on a wood surface"
@@ -231,7 +308,7 @@ export default function Home() {
               <div className="grid gap-10 min-[720px]:grid-cols-[0.42fr_0.58fr] min-[720px]:items-center min-[720px]:gap-8 lg:grid-cols-[0.44fr_0.56fr] lg:gap-20">
                 <div className="space-y-12 min-[720px]:py-8 lg:py-14">
                   <Link
-                    href="/cases"
+                    href="/shop/cases"
                     className="group block transition-opacity duration-300 hover:opacity-90 focus:outline-none"
                     aria-label="View Eurorack Cases"
                   >
@@ -268,7 +345,7 @@ export default function Home() {
                   </Link>
                 </div>
                 <Link
-                  href="/cases"
+                  href="/shop/cases"
                   className="group block focus:outline-none"
                   aria-label="View Eurorack Cases"
                 >
@@ -286,7 +363,7 @@ export default function Home() {
 
           </div>
 
-          <div id="workshop" className="mt-10 border-t border-[#8f5c32]/18 pt-7 md:mt-14 md:pt-8">
+          <div id="workshop" className="mt-7 border-t border-[#8f5c32]/18 pt-6 md:mt-14 md:pt-8">
             {workshopPosts.length > 0 ? (
               <div className="mb-0">
                 <div className="mb-6 flex items-end justify-between gap-6">
@@ -362,55 +439,53 @@ export default function Home() {
               </div>
             ) : null}
           </div>
-        </div>
-      </section>
 
-      {/* --- IN THE WILD --- */}
-      <section className="px-6 pb-10 pt-2 text-[#F5EBDD] md:px-10 md:pt-4 lg:px-14">
-        <div className="mx-auto max-w-7xl border-t border-[#8f5c32]/18 pt-5 md:pt-6">
-          <div className="mb-5">
-            <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/74">
-              Noisy owners
-            </p>
-            <h2 className="[font-family:var(--font-inter)] mt-3 text-xl font-medium uppercase tracking-[0.16em] text-[#e2c8a2] md:text-2xl">
-              In the Wild
-            </h2>
-          </div>
-        </div>
-
-        <div className="relative -mx-6 md:-mx-10 lg:-mx-14">
-          <div
-            ref={carouselRef}
-            className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-4 touch-pan-x md:px-10 lg:px-14"
-          >
-            {inTheWildCarouselItems.map((item, i) => (
-              <div
-                key={i}
-                className="group relative h-[18rem] w-[78vw] max-w-[25rem] flex-shrink-0 snap-start overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_24px_62px_rgba(0,0,0,0.28)] transition-transform duration-300 ease-in-out active:scale-[0.99] md:h-80 md:w-[26rem]"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  draggable="false"
-                  className="h-full w-full object-cover opacity-82 transition duration-700 group-hover:scale-[1.018] group-hover:opacity-96"
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.02),rgba(12,8,6,0.58)),linear-gradient(90deg,rgba(14,9,7,0.14),transparent_52%,rgba(14,9,7,0.12))]" />
-                <div className="absolute inset-x-0 bottom-0 p-5">
-                  <p className="text-[0.56rem] font-medium uppercase tracking-[0.24em] text-[#d5a06a]/76">
-                    Noisy owner
-                  </p>
-                  <p className="mt-2 [font-family:var(--font-inter)] text-sm font-medium uppercase tracking-[0.14em] text-[#f0dbc0]">
-                    {item.name}
-                  </p>
+          {inTheWildItems.length > 0 ? (
+            <section className="mt-7 border-t border-[#8f5c32]/18 pt-6 md:mt-14 md:pt-8">
+              <div className="mb-6 flex items-end justify-between gap-6">
+                <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/74">
+                  Noisy owners
+                </p>
+                <span className="[font-family:var(--font-inter)] hidden text-[0.54rem] font-medium uppercase tracking-[0.2em] text-[#d5a06a]/58 sm:block">
+                  Real rigs, real spaces
+                </span>
+              </div>
+              <h2 className="[font-family:var(--font-inter)] mb-6 text-xl font-medium uppercase tracking-[0.16em] text-[#e2c8a2] md:text-2xl">
+                In the Wild
+              </h2>
+              <div className="relative -mx-6 sm:mx-0">
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-[#1A1410] to-transparent sm:w-14" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-[#1A1410] to-transparent sm:w-14" />
+                <div
+                  ref={inTheWildCarouselRef}
+                  className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-3 touch-pan-x sm:gap-6 sm:px-0"
+                  style={{ touchAction: "pan-x" }}
+                >
+                  {inTheWildItems.map((item, index) => (
+                    <article
+                      key={`${item.caption}-${index}`}
+                      className="group relative h-[17rem] w-[84vw] max-w-none flex-shrink-0 snap-center overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_24px_62px_rgba(0,0,0,0.28)] sm:h-72 sm:w-[25rem] sm:snap-start md:h-76 md:w-[26rem]"
+                    >
+                      <img
+                        src={item.imageUrl}
+                        alt={item.caption}
+                        className="h-full w-full object-cover opacity-82 transition duration-500 group-hover:scale-[1.018] group-hover:opacity-96"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.02),rgba(12,8,6,0.68)),linear-gradient(90deg,rgba(14,9,7,0.14),transparent_52%,rgba(14,9,7,0.12))]" />
+                      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                        <p className="[font-family:var(--font-inter)] text-sm font-medium uppercase tracking-[0.14em] text-[#f0dbc0] sm:text-base">
+                          {item.caption}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+            </section>
+          ) : null}
         </div>
       </section>
+
       </div>
 
       {/* --- CONTACT MODAL --- */}

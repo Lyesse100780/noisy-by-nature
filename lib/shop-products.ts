@@ -27,7 +27,7 @@ export const controllerProducts: ShopProduct[] = [
   {
     slug: "fad3rs",
     name: "FAD3RS",
-    price: "EUR 179 launch price",
+    price: "EUR 179 · Limited First Runs",
     priceAmount: 17900,
     currency: "eur",
     available: false,

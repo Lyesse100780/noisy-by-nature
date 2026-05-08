@@ -34,6 +34,11 @@ export type WorkshopPost = WorkshopPostSummary & {
   body?: PortableTextBlock[];
 };
 
+export type InTheWildItem = {
+  imageUrl: string;
+  caption: string;
+};
+
 const workshopPostFields = groq`
   title,
   "slug": slug.current,
@@ -46,6 +51,13 @@ const workshopPostFields = groq`
 export const featuredWorkshopPostsQuery = groq`
   *[_type == "workshopPost" && featured == true && defined(slug.current)] | order(order asc, publishedAt desc) [0...6] {
     ${workshopPostFields}
+  }
+`;
+
+export const inTheWildItemsQuery = groq`
+  *[_type == "inTheWildItem" && defined(image.asset)] | order(order asc, _createdAt desc) {
+    caption,
+    "imageUrl": image.asset->url
   }
 `;
 

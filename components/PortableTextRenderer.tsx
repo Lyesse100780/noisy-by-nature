@@ -7,12 +7,12 @@ const components: PortableTextComponents = {
       <p className="text-[1.02rem] font-light leading-8 text-[#e6d9c5]/76 md:text-lg">{children}</p>
     ),
     h2: ({ children }) => (
-      <h2 className="[font-family:var(--font-inter)] pt-6 text-xl font-medium uppercase tracking-[0.18em] text-[#e2c8a2]">
+      <h2 className="[font-family:var(--font-inter)] pt-6 text-base font-medium uppercase tracking-[0.18em] text-[#e2c8a2]">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="[font-family:var(--font-inter)] pt-4 text-sm font-medium uppercase tracking-[0.22em] text-[#d5a06a]/88">
+      <h3 className="[font-family:var(--font-inter)] pt-4 text-xs font-medium uppercase tracking-[0.22em] text-[#d5a06a]/88">
         {children}
       </h3>
     ),

@@ -1,6 +1,10 @@
 import "./globals.css";
 import { Playfair_Display, Inter } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import MeasurementBootstrap from "@/components/MeasurementBootstrap";
+import NotifyPopupProvider from "@/components/NotifyPopupProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -31,6 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="font-body bg-noisy-cream text-noisy-black">
+        <MeasurementBootstrap />
+
         {/* Script universel MailerLite, EXACTEMENT comme le snippet officiel */}
         <Script
           id="mailerlite-universal"
@@ -48,6 +54,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
 
         <main>{children}</main>
+        <NotifyPopupProvider />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
