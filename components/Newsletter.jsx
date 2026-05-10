@@ -3,23 +3,14 @@
 import { openNewsletterPopup } from "@/lib/newsletter";
 
 /**
- * @param {{ id?: string, copy?: string }} props
+ * @param {{ id?: string }} props
  */
 export default function Newsletter(props) {
-  const {
-    id,
-    copy = "Subscribe to make sure you don't miss anything.",
-  } = props;
+  const { id } = props;
   return (
     <section id={id} className="bg-transparent px-0 py-0">
-      <div className="bg-[#120c08]/28 px-6 py-3 md:px-10 md:py-4">
-        <div className="mx-auto flex max-w-4xl flex-col items-center gap-3 text-center">
-          <div>
-            <p className="max-w-2xl text-[0.88rem] font-light leading-6 text-[#e6d9c5]/74 md:text-[0.96rem]">
-              {copy}
-            </p>
-          </div>
-
+      <div className="bg-[#120c08]/22 px-6 py-2 md:px-10 md:py-3">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-2 text-center">
           <div className="flex justify-center">
             <button
               type="button"

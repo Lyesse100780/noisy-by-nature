@@ -16,8 +16,8 @@ const productCheckoutData: Record<
 > = {
   sagebloom: { priceAmount: 23000, currency: "eur", available: true, stockQuantity: 1 },
   coraldust: { priceAmount: 21000, currency: "eur", available: true, stockQuantity: 1 },
-  frontiergreen: { priceAmount: 22000, currency: "eur", available: true, stockQuantity: 1 },
-  ashtrail: { priceAmount: 43000, currency: "eur", available: true, stockQuantity: 1 },
+  frontiergreen: { priceAmount: 22000, currency: "eur", available: false, stockQuantity: 0 },
+  ashtrail: { priceAmount: 43000, currency: "eur", available: false, stockQuantity: 0 },
   oxbloodmesa: { priceAmount: 46000, currency: "eur", available: false, stockQuantity: 0 },
   "black-and-silver": { priceAmount: 39000, currency: "eur", available: true, stockQuantity: 1 },
   burntleather: { priceAmount: 43000, currency: "eur", available: true, stockQuantity: 1 },

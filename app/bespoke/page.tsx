@@ -1,6 +1,7 @@
 "use client";
 
 import { type FormEvent, type ReactNode, useMemo, useState } from "react";
+import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
 
 type Format = "3U" | "6U" | "7U" | "9U";
@@ -428,6 +429,14 @@ export default function BespokePage() {
                   ))}
                 </div>
               ) : null}
+
+              <p className="mt-3 text-sm font-light leading-6 text-[#e6d9c5]/58">
+                For a better sense of how each finish looks on a case, take a look at{" "}
+                <Link href="/shop/cases" className="text-[#d5a06a]/84 underline-offset-4 transition hover:text-[#efd1a2] hover:underline">
+                  the available cases
+                </Link>
+                .
+              </p>
             </ConfigSection>
 
             <ConfigSection title="Rails">

@@ -19,13 +19,63 @@ export default function Home() {
   const [showContact, setShowContact] = useState(false);
   const [workshopPosts, setWorkshopPosts] = useState<WorkshopPostSummary[]>([]);
   const [inTheWildItems, setInTheWildItems] = useState<InTheWildItem[]>([]);
+  const [activeEcosystemSlide, setActiveEcosystemSlide] = useState(0);
+  const [ecosystemCarouselHeight, setEcosystemCarouselHeight] = useState<number | null>(null);
   const [activeWorkshopPost, setActiveWorkshopPost] = useState(0);
+  const ecosystemCarouselRef = useRef<HTMLDivElement | null>(null);
   const workshopCarouselRef = useRef<HTMLDivElement | null>(null);
   const inTheWildCarouselRef = useRef<HTMLDivElement | null>(null);
   const inTheWildAutoScrollFrameRef = useRef<number | null>(null);
   const inTheWildAutoScrollPausedRef = useRef(false);
   const inTheWildAutoScrollEnabledRef = useRef(false);
   const inTheWildResumeTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const el = ecosystemCarouselRef.current;
+    if (!el) return;
+
+    const updateHeight = (index: number) => {
+      const slide = el.children[index] as HTMLElement | undefined;
+      if (!slide) return;
+      setEcosystemCarouselHeight(slide.offsetHeight);
+    };
+
+    const updateActiveSlide = () => {
+      const slides = Array.from(el.children) as HTMLElement[];
+      if (!slides.length) return;
+
+      const nextIndex = slides.reduce(
+        (closest, slide, index) => {
+          const distance = Math.abs(slide.offsetLeft - el.scrollLeft);
+          return distance < closest.distance ? { index, distance } : closest;
+        },
+        { index: 0, distance: Number.POSITIVE_INFINITY },
+      ).index;
+
+      setActiveEcosystemSlide(nextIndex);
+      updateHeight(nextIndex);
+    };
+
+    updateActiveSlide();
+    el.addEventListener("scroll", updateActiveSlide, { passive: true });
+    window.addEventListener("resize", updateActiveSlide);
+
+    const images = Array.from(el.querySelectorAll("img"));
+    images.forEach((image) => image.addEventListener("load", updateActiveSlide));
+
+    return () => {
+      el.removeEventListener("scroll", updateActiveSlide);
+      window.removeEventListener("resize", updateActiveSlide);
+      images.forEach((image) => image.removeEventListener("load", updateActiveSlide));
+    };
+  }, []);
+
+  const scrollEcosystemTo = (index: number) => {
+    const el = ecosystemCarouselRef.current;
+    const slide = el?.children[index] as HTMLElement | undefined;
+    if (!el || !slide) return;
+    el.scrollTo({ left: slide.offsetLeft, behavior: "smooth" });
+  };
 
   useEffect(() => {
     const el = workshopCarouselRef.current;
@@ -253,8 +303,14 @@ export default function Home() {
       <div className="topographic-surface bg-[#1A1410]">
       <section id="controllers" className="text-[#F5EBDD] px-6 pb-16 pt-2 md:px-12 md:pb-24 md:pt-10 lg:px-20">
         <div className="mx-auto max-w-7xl">
-          <div className="space-y-10 md:space-y-14">
+          <div className="space-y-7 md:space-y-10">
             <div className="border-t border-[#8f5c32]/18 pt-6 md:pt-10">
+              <div
+                ref={ecosystemCarouselRef}
+                className="no-scrollbar -mx-6 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto overflow-y-hidden scroll-smooth px-6 pb-2 touch-pan-x transition-[height] duration-500 ease-out md:-mx-8 md:px-8 lg:-mx-10 lg:gap-10 lg:px-10"
+                style={ecosystemCarouselHeight ? { height: ecosystemCarouselHeight + 8 } : undefined}
+              >
+              <article className="w-[88vw] shrink-0 snap-center md:w-[min(88vw,78rem)] lg:w-full">
               <div className="mb-6 md:mb-10">
                 <p className="[font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
                   Controllers
@@ -293,13 +349,9 @@ export default function Home() {
                   </div>
                 </Link>
               </div>
-            </div>
+              </article>
 
-            <div className="border-y border-[#8f5c32]/18 py-2 md:py-3">
-              <Newsletter id="join-list" />
-            </div>
-
-            <div className="-mt-12 pt-3 md:-mt-14 md:pt-4">
+              <article className="w-[88vw] shrink-0 snap-center md:w-[min(88vw,78rem)] lg:w-full">
               <div className="mb-5 md:mb-6">
                 <p className="[font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
                   Cases
@@ -359,6 +411,28 @@ export default function Home() {
                   </div>
                 </Link>
               </div>
+              </article>
+              </div>
+
+              <div className="mt-5 flex justify-center gap-2" aria-label="Product family carousel navigation">
+                {["Controllers", "Cases"].map((label, index) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => scrollEcosystemTo(index)}
+                    aria-label={`Go to ${label}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      activeEcosystemSlide === index
+                        ? "w-7 bg-[#d5a06a]/78"
+                        : "w-1.5 bg-[#8f5c32]/42 hover:bg-[#d5a06a]/58"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="border-t border-[#8f5c32]/18 py-1 md:py-2">
+              <Newsletter id="join-list" />
             </div>
 
           </div>
