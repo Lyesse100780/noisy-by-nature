@@ -254,7 +254,7 @@ export default function BespokePage() {
 
   return (
     <main className="topographic-surface min-h-screen bg-[#1A1410] text-[#F5EBDD]">
-      <section className="site-hero relative overflow-hidden bg-[#100b08] text-[#f4ead8] [--hero-desktop-height:24vh] [--hero-mobile-height:8.75rem]">
+      <section className="site-hero relative overflow-hidden bg-[#100b08] text-[#f4ead8] [--hero-desktop-height:24vh] [--hero-mobile-height:7.9rem]">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-100"
           style={{ backgroundImage: "url('/images/brand/background-topography-v2.png')" }}
@@ -264,7 +264,7 @@ export default function BespokePage() {
 
         <SiteNav />
 
-        <div className="site-hero__content relative z-10 mx-auto flex w-full max-w-7xl items-center justify-center px-6 md:px-10 lg:px-14">
+        <div className="site-hero__content relative z-10 mx-auto flex w-full max-w-7xl translate-y-3 items-center justify-center px-6 md:translate-y-0 md:px-10 lg:px-14">
           <div className="text-center">
             <h1
               className="[font-family:var(--font-playfair)] text-[clamp(2.35rem,5.2vw,4.85rem)] font-medium uppercase leading-none tracking-[0.18em]"
@@ -284,14 +284,11 @@ export default function BespokePage() {
               </p>
               <span className="hidden h-px flex-1 bg-current opacity-36 sm:block" />
             </div>
-            <p className="mx-auto mt-3 max-w-[34rem] text-sm font-light leading-6 text-[#e6d9c5]/64 md:text-base">
-              Shape the case around your system. Design format, materials, color and options.
-            </p>
           </div>
         </div>
       </section>
 
-      <section className="px-6 py-10 md:px-10 md:py-14 lg:px-14">
+      <section className="px-6 pb-10 pt-5 md:px-10 md:pb-14 md:pt-8 lg:px-14">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.44fr_0.56fr] lg:items-start">
           <form onSubmit={handleSubmit} className="order-2 space-y-8 lg:order-1">
             <ConfigSection title="Format">
