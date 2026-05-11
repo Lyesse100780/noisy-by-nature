@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Newsletter from "@/components/Newsletter";
 import SiteNav from "@/components/SiteNav";
 
 const specs = [
@@ -118,43 +117,6 @@ export default function Fad3rsPage() {
                 </p>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-6 pb-24 md:px-12 md:pb-32 lg:px-20">
-        <div className="mx-auto max-w-7xl border-t border-[#8f5c32]/18 pt-12">
-          <div className="grid gap-10 md:grid-cols-[0.45fr_0.55fr] md:items-start md:gap-16">
-            <div>
-              <p className="[font-family:var(--font-inter)] mb-5 text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
-                Availability
-              </p>
-              <h2 className="[font-family:var(--font-playfair)] text-3xl font-medium leading-tight tracking-[0.03em] text-[#e6d3b7] md:text-5xl">
-                Built in small runs.
-              </h2>
-            </div>
-            <div>
-              <p className="max-w-2xl text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/74 md:text-lg">
-                Join the mailing list for release notes, availability, and workshop updates. For direct questions, write to the workshop.
-              </p>
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                <a
-                  href="mailto:contact@noisybynature.eu?subject=FAD3RS%20availability"
-                  className="[font-family:var(--font-inter)] inline-flex items-center justify-center border border-[#c69054]/42 px-6 py-3 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a] transition-colors hover:border-[#d5a06a]/70 hover:text-[#efd1a2]"
-                >
-                  Request availability
-                </a>
-                <Link
-                  href="/#controllers"
-                  className="[font-family:var(--font-inter)] inline-flex items-center justify-center px-6 py-3 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/78 transition-colors hover:text-[#efd1a2]"
-                >
-                  Back to products
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="mt-12">
-            <Newsletter />
           </div>
         </div>
       </section>
