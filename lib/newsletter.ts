@@ -10,6 +10,10 @@ type NewsletterPopupOptions = {
 
 export function openNewsletterPopup(): void;
 export function openNewsletterPopup(notifyProductKey: string): void;
+export function openNewsletterPopup(
+  notifyProductKey: string | undefined,
+  options: NewsletterPopupOptions,
+): void;
 export function openNewsletterPopup(arg?: unknown, options: NewsletterPopupOptions = {}) {
   if (typeof window === "undefined") return;
 
