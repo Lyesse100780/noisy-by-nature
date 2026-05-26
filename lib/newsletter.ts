@@ -4,12 +4,20 @@ type MailerLiteWindow = Window & {
 };
 
 const defaultFormId = "eWb4s9";
+type NewsletterPopupOptions = {
+  fallbackToHome?: boolean;
+};
 
 export function openNewsletterPopup(): void;
 export function openNewsletterPopup(notifyProductKey: string): void;
-export function openNewsletterPopup(arg?: unknown) {
+export function openNewsletterPopup(
+  notifyProductKey: string | undefined,
+  options: NewsletterPopupOptions,
+): void;
+export function openNewsletterPopup(arg?: unknown, options: NewsletterPopupOptions = {}) {
   if (typeof window === "undefined") return;
 
+  const { fallbackToHome = true } = options;
   const product = typeof arg === "string" && arg.length > 0 ? arg : undefined;
 
   // If product is specified, use the custom notify popup
@@ -41,7 +49,9 @@ export function openNewsletterPopup(arg?: unknown) {
       return;
     }
 
-    window.location.href = "/?newsletter=1#join-list";
+    if (fallbackToHome) {
+      window.location.href = "/?newsletter=1#join-list";
+    }
   };
 
   tryOpen();
