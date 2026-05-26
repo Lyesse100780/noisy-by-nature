@@ -46,24 +46,29 @@ export default function Fad3rsPage() {
 
       <section className="px-6 pb-20 pt-10 md:px-12 md:pb-28 md:pt-16 lg:px-20">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-10 md:grid-cols-[0.54fr_0.46fr] md:items-center md:gap-14 lg:gap-20">
-            <div className="relative h-[30rem] overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_30px_76px_rgba(0,0,0,0.34)] md:h-[36rem] lg:h-[42rem]">
-              <img
-                src="/images/brand/fad3rs-img1.png"
-                alt="FAD3RS MIDI controller with three faders"
-                className="h-full w-full object-cover object-center opacity-90"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.01),rgba(12,8,6,0.16)),linear-gradient(90deg,rgba(14,9,7,0.18),transparent_42%,rgba(14,9,7,0.16))]" />
-            </div>
-
-            <div className="md:py-12">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 md:mb-10">
               <p className="[font-family:var(--font-inter)] mb-5 text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/78">
                 MIDI controller
               </p>
-              <h2 className="[font-family:var(--font-playfair)] max-w-xl text-3xl font-medium leading-tight tracking-[0.03em] text-[#e6d3b7] md:text-5xl">
+              <h2 className="[font-family:var(--font-playfair)] max-w-3xl text-[1.7rem] font-medium leading-tight tracking-[0.03em] text-[#e6d3b7] md:text-[2.5rem] lg:text-[2.9rem]">
                 Three long-throw faders for musical automation.
               </h2>
-              <div className="mt-8 max-w-xl space-y-5 text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/74 md:text-lg">
+            </div>
+
+            <div className="relative aspect-video overflow-hidden border border-[#8f5c32]/18 bg-[#0f0a07] shadow-[0_30px_76px_rgba(0,0,0,0.34)]">
+              <iframe
+                src="https://www.youtube.com/embed/yhE2LEHcDf4?rel=0&modestbranding=1"
+                title="FAD3RS demonstration video"
+                className="absolute inset-0 h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.01),rgba(12,8,6,0.16)),linear-gradient(90deg,rgba(14,9,7,0.18),transparent_42%,rgba(14,9,7,0.16))]" />
+            </div>
+
+            <div className="mt-9 md:mt-10">
+              <div className="max-w-3xl space-y-5 text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/74 md:text-lg">
                 <p>
                   FAD3RS is a class-compliant MIDI controller built around three 100mm Alps faders for expressive automation and precise control.
                 </p>

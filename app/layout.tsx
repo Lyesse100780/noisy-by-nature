@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import MeasurementBootstrap from "@/components/MeasurementBootstrap";
+import NewsletterAutoPopup from "@/components/NewsletterAutoPopup";
 import NotifyPopupProvider from "@/components/NotifyPopupProvider";
 
 const playfair = Playfair_Display({
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
 
         <main>{children}</main>
+        <NewsletterAutoPopup />
         <NotifyPopupProvider />
         <Analytics />
         <SpeedInsights />
