@@ -20,7 +20,7 @@ const productCheckoutData: Record<
   ashtrail: { priceAmount: 43000, currency: "eur", available: false, stockQuantity: 0 },
   oxbloodmesa: { priceAmount: 46000, currency: "eur", available: false, stockQuantity: 0 },
   "black-and-silver": { priceAmount: 39000, currency: "eur", available: true, stockQuantity: 1 },
-  burntleather: { priceAmount: 43000, currency: "eur", available: true, stockQuantity: 1 },
+  burntleather: { priceAmount: 43000, currency: "eur", available: false, stockQuantity: 0 },
 };
 
 export const controllerProducts: ShopProduct[] = [
