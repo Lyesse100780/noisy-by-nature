@@ -45,8 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,e,u,f,l,n){
+                w.__mailerliteLoaded=false;
+                w.__mailerliteLoadFailed=false;
                 w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments)};
                 l=d.createElement(e); l.async=1; l.src=u;
+                l.onload=function(){w.__mailerliteLoaded=true};
+                l.onerror=function(){w.__mailerliteLoadFailed=true};
                 n=d.getElementsByTagName(e)[0]; n.parentNode.insertBefore(l,n);
               })(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
               ml('account', '1914173');

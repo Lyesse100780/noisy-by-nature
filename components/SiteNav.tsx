@@ -18,7 +18,7 @@ const youtubeUrl = "https://youtube.com/@noisybynaturelab?si=ETY3HemnXUXxQ9z9";
 
 export default function SiteNav({
   onContact,
-  contactHref = "mailto:contact@noisybynature.eu",
+  contactHref = "/?contact=1",
   joinHref = "/#join-list",
   showHomeInMobileMenu = true,
 }: SiteNavProps) {
@@ -27,7 +27,8 @@ export default function SiteNav({
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    setMounted(true);
+    const frame = window.requestAnimationFrame(() => setMounted(true));
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {

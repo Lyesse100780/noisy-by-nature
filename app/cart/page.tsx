@@ -246,13 +246,13 @@ export default function CartPage() {
                   ) : (
                     <p className="text-xs leading-6 text-[#d28b65]">No shipping option is available for this destination.</p>
                   )}
-                  <a
-                    href="mailto:contact@noisybynature.eu"
+                  <Link
+                    href="/?contact=1"
                     className="inline-flex items-center gap-2 [font-family:var(--font-inter)] text-[0.56rem] uppercase tracking-[0.18em] text-[#d5a06a]/68 transition hover:text-[#efd1a2]"
                   >
                     <Mail className="h-3 w-3" strokeWidth={1.6} />
                     Your country is not in the list? Drop me a line.
-                  </a>
+                  </Link>
                 </div>
                 <div className="mt-4 flex items-center justify-between text-sm text-[#e6d9c5]/76">
                   <span>Shipping</span>

@@ -14,7 +14,7 @@ export default function Newsletter(props) {
           <div className="flex justify-center">
             <button
               type="button"
-              onClick={openNewsletterPopup}
+              onClick={() => openNewsletterPopup()}
               className="inline-flex min-w-[220px] items-center justify-center border border-[#c69054]/42 bg-[#120c08]/22 px-4 py-[11px] text-center [font-family:var(--font-inter)] text-[11px] font-medium uppercase tracking-[0.22em] text-[#d5a06a] transition hover:border-[#d5a06a]/70 hover:bg-[#120c08]/42 hover:text-[#efd1a2]"
             >
               Join the mailing list

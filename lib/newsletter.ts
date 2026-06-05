@@ -1,6 +1,8 @@
 type MailerLiteWindow = Window & {
   ml?: (action: "show", formId: string, force: boolean) => void;
   notifyPopupOpen?: (product: string) => void;
+  __mailerliteLoaded?: boolean;
+  __mailerliteLoadFailed?: boolean;
 };
 
 const defaultFormId = "eWb4s9";
@@ -33,25 +35,36 @@ export function openNewsletterPopup(arg?: unknown, options: NewsletterPopupOptio
 
   // Otherwise use default MailerLite form
   let attempts = 0;
+  const maxAttempts = 24;
+  const retryDelay = 180;
+
+  const fallback = () => {
+    if (!fallbackToHome) return;
+
+    if (window.location.pathname === "/") {
+      window.location.hash = "join-list";
+      return;
+    }
+
+    window.location.href = "/?newsletter=1#join-list";
+  };
 
   const tryOpen = () => {
     const mailerLite = window as MailerLiteWindow;
 
-    if (typeof mailerLite.ml === "function") {
+    if (mailerLite.__mailerliteLoaded && typeof mailerLite.ml === "function") {
       mailerLite.ml("show", defaultFormId, true);
       return;
     }
 
     attempts += 1;
 
-    if (attempts < 12) {
-      window.setTimeout(tryOpen, 180);
+    if (!mailerLite.__mailerliteLoadFailed && attempts < maxAttempts) {
+      window.setTimeout(tryOpen, retryDelay);
       return;
     }
 
-    if (fallbackToHome) {
-      window.location.href = "/?newsletter=1#join-list";
-    }
+    fallback();
   };
 
   tryOpen();

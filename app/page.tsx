@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Newsletter from "@/components/Newsletter";
 import SiteNav from "@/components/SiteNav";
@@ -17,6 +17,8 @@ const mapFeaturedWorkshopPosts = (posts: WorkshopPostSummary[]) =>
 
 export default function Home() {
   const [showContact, setShowContact] = useState(false);
+  const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [contactError, setContactError] = useState("");
   const [workshopPosts, setWorkshopPosts] = useState<WorkshopPostSummary[]>([]);
   const [inTheWildItems, setInTheWildItems] = useState<InTheWildItem[]>([]);
   const [activeWorkshopPost, setActiveWorkshopPost] = useState(0);
@@ -26,6 +28,15 @@ export default function Home() {
   const inTheWildAutoScrollPausedRef = useRef(false);
   const inTheWildAutoScrollEnabledRef = useRef(false);
   const inTheWildResumeTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("contact") !== "1") return;
+
+    setContactStatus("idle");
+    setContactError("");
+    setShowContact(true);
+  }, []);
 
   useEffect(() => {
     const el = workshopCarouselRef.current;
@@ -56,6 +67,41 @@ export default function Home() {
     const card = el?.children[index] as HTMLElement | undefined;
     if (!el || !card) return;
     el.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+  };
+
+  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setContactStatus("sending");
+    setContactError("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          message: formData.get("message"),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Unable to send the message right now.");
+      }
+
+      form.reset();
+      setContactStatus("sent");
+    } catch (error) {
+      setContactStatus("error");
+      setContactError(error instanceof Error ? error.message : "Unable to send the message right now.");
+    }
   };
 
   useEffect(() => {
@@ -225,7 +271,15 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_44%,rgba(177,105,48,0.09),transparent_30%),linear-gradient(90deg,rgba(8,5,4,0.91),rgba(17,11,8,0.58)_46%,rgba(7,5,4,0.91)),linear-gradient(180deg,rgba(5,4,3,0.6),rgba(15,10,7,0.32)_52%,#1A1410_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-b from-transparent to-[#1A1410]" />
 
-        <SiteNav onContact={() => setShowContact(true)} joinHref="#join-list" showHomeInMobileMenu={false} />
+        <SiteNav
+          onContact={() => {
+            setContactStatus("idle");
+            setContactError("");
+            setShowContact(true);
+          }}
+          joinHref="#join-list"
+          showHomeInMobileMenu={false}
+        />
 
         <div className="site-hero__content relative z-10 mx-auto flex w-full max-w-7xl translate-y-5 items-center justify-center px-6 md:translate-y-0 md:px-10 lg:px-14">
           <div className="text-center">
@@ -500,9 +554,7 @@ export default function Home() {
             </button>
             <h2 className="text-2xl font-display mb-4 text-noisy-copper">Contact Me</h2>
             <form
-              action="mailto:contact@noisybynature.eu"
-              method="post"
-              encType="text/plain"
+              onSubmit={handleContactSubmit}
               className="space-y-4"
             >
               <input
@@ -526,11 +578,22 @@ export default function Home() {
                 required
                 className="w-full px-4 py-2 bg-transparent border border-[#b89c7a]/40 text-[#F5EBDD] placeholder-[#D9C9B2]/60 rounded-md focus:outline-none focus:border-noisy-copper resize-none"
               />
+              {contactStatus === "sent" ? (
+                <p className="border border-[#c69054]/35 bg-[#c69054]/10 px-4 py-3 text-sm text-[#efd1a2]">
+                  Message sent. You will receive a confirmation email shortly.
+                </p>
+              ) : null}
+              {contactStatus === "error" ? (
+                <p className="border border-red-400/35 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+                  {contactError}
+                </p>
+              ) : null}
               <button
                 type="submit"
+                disabled={contactStatus === "sending"}
                 className="w-full bg-noisy-copper hover:bg-noisy-copper/80 text-white py-2 rounded-md transition-colors"
               >
-                Send Message
+                {contactStatus === "sending" ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
