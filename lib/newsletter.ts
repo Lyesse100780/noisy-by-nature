@@ -21,14 +21,15 @@ export function openNewsletterPopup(arg?: unknown, options: NewsletterPopupOptio
 
   const { fallbackToHome = true } = options;
   const product = typeof arg === "string" && arg.length > 0 ? arg : undefined;
+  const mailerLite = window as MailerLiteWindow;
+
+  if (typeof mailerLite.notifyPopupOpen === "function") {
+    mailerLite.notifyPopupOpen(product ?? "newsletter");
+    return;
+  }
 
   // If product is specified, use the custom notify popup
   if (product) {
-    const mailerLite = window as MailerLiteWindow;
-    if (typeof mailerLite.notifyPopupOpen === "function") {
-      mailerLite.notifyPopupOpen(product);
-      return;
-    }
     console.warn("Notify popup not available");
     return;
   }

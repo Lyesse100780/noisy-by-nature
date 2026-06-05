@@ -12,6 +12,7 @@ export default function NotifyPopup({ isOpen, onClose, product }: NotifyPopupPro
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const isGeneralNewsletter = product === "newsletter";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +26,12 @@ export default function NotifyPopup({ isOpen, onClose, product }: NotifyPopupPro
     setMessage(null);
 
     try {
-      const response = await fetch("/api/notify", {
+      const response = await fetch(isGeneralNewsletter ? "/api/newsletter" : "/api/notify", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, product }),
+        body: JSON.stringify(isGeneralNewsletter ? { email } : { email, product }),
       });
 
       const data = await response.json();
@@ -38,7 +39,9 @@ export default function NotifyPopup({ isOpen, onClose, product }: NotifyPopupPro
       if (response.ok || data.success) {
         setMessage({
           type: "success",
-          text: `You'll be notified when ${product.toUpperCase()} is available!`,
+          text: isGeneralNewsletter
+            ? "You're on the Noisy by Nature list."
+            : `You'll be notified when ${product.toUpperCase()} is available!`,
         });
         setEmail("");
         setTimeout(() => {
@@ -75,10 +78,16 @@ export default function NotifyPopup({ isOpen, onClose, product }: NotifyPopupPro
         </button>
 
         <h2 className="text-xl font-display text-[#d5a06a] mb-2">
-          Notify Me
+          {isGeneralNewsletter ? "Join the List" : "Notify Me"}
         </h2>
         <p className="text-sm text-[#E6D9C5]/72 mb-6">
-          Get an email when <span className="font-semibold text-[#d5a06a]">{product.toUpperCase()}</span> is available.
+          {isGeneralNewsletter ? (
+            "No spam, only handcrafted news, workshop notes, and limited-run releases."
+          ) : (
+            <>
+              Get an email when <span className="font-semibold text-[#d5a06a]">{product.toUpperCase()}</span> is available.
+            </>
+          )}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,12 +119,12 @@ export default function NotifyPopup({ isOpen, onClose, product }: NotifyPopupPro
             disabled={loading}
             className="w-full px-4 py-3 rounded-md bg-[#d5a06a] hover:bg-[#d5a06a]/90 disabled:bg-[#d5a06a]/50 text-[#1A1410] font-semibold uppercase tracking-[0.1em] transition-all duration-300"
           >
-            {loading ? "Subscribing..." : "Notify Me"}
+            {loading ? "Subscribing..." : isGeneralNewsletter ? "Join the Mailing List" : "Notify Me"}
           </button>
         </form>
 
         <p className="text-xs text-[#8f5c32]/60 text-center mt-4">
-          We'll only email you about {product.toUpperCase()} availability.
+          {isGeneralNewsletter ? "No spams — only handcrafted news." : `We'll only email you about ${product.toUpperCase()} availability.`}
         </p>
       </div>
     </div>

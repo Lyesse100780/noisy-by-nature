@@ -21,7 +21,8 @@ type BespokeRequestPayload = {
 };
 
 const booleanLabel = (value?: boolean) => (value ? "yes" : "no");
-const contactEmail = "contact@noisybynature.eu";
+const formspreeEndpoint =
+  process.env.FORMSPREE_CONTACT_ENDPOINT?.trim() || "https://formspree.io/f/mnjyjjkw";
 
 const formatEmailText = (payload: BespokeRequestPayload) => {
   const configuration = payload.configuration || {};
@@ -68,7 +69,30 @@ export async function POST(request: Request) {
 
   const subject = `Bespoke case request - ${payload.configuration.hp}hp ${payload.configuration.format}`;
   const body = formatEmailText(payload);
-  const mailtoUrl = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  return NextResponse.json({ ok: true, mailtoUrl });
+  try {
+    const response = await fetch(formspreeEndpoint, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: payload.email,
+        message: body,
+        _subject: subject,
+        _replyto: payload.email,
+      }),
+    });
+
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(detail || "Formspree rejected the request.");
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Unable to send the request right now." }, { status: 500 });
+  }
 }

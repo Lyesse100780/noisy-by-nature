@@ -237,15 +237,10 @@ export default function BespokePage() {
         }),
       });
 
-      const result = (await response.json().catch(() => null)) as { mailtoUrl?: string } | null;
-
-      if (!response.ok || !result?.mailtoUrl) {
-        throw new Error("Unable to send request.");
-      }
+      if (!response.ok) throw new Error("Unable to send request.");
 
       setSubmitStatus("sent");
-      setSubmitMessage("Your request is ready. Please send it from your email client.");
-      window.location.href = result.mailtoUrl;
+      setSubmitMessage("Your request has been sent. I will review it and get back to you shortly.");
     } catch {
       setSubmitStatus("error");
       setSubmitMessage("Unable to send the request right now. Please try again or email the workshop directly.");
