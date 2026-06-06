@@ -91,7 +91,7 @@ export default function Shop() {
                     <p className="text-sm font-medium text-[#e6d9c5]/84">EUR 179 launch price</p>
                     <button
                       type="button"
-                      onClick={() => openNewsletterPopup()}
+                      onClick={() => openNewsletterPopup("fad3rs")}
                       className="mt-4 block w-full border border-[#c69054]/46 bg-[#d5a06a]/8 px-5 py-2.5 text-center [font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.2em] text-[#d5a06a] transition hover:border-[#d5a06a]/76 hover:bg-[#d5a06a]/12 hover:text-[#efd1a2]"
                     >
                       Notify me when available
