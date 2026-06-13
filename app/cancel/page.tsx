@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function CancelPage() {
   return (
     <div className="topographic-surface min-h-screen bg-[#1A1410] text-[#F5EBDD] flex items-center justify-center px-6">
@@ -9,12 +11,12 @@ export default function CancelPage() {
           No payment was processed. If you encountered a problem or changed
           your mind, you can safely close this page or go back to the shop.
         </p>
-        <a
+        <Link
           href="/shop"
           className="inline-block mt-4 px-6 py-3 rounded-md border border-noisy-copper/60 text-sm uppercase tracking-wide font-body hover:bg-noisy-copper hover:text-[#1A1410] transition-all"
         >
           Back to shop
-        </a>
+        </Link>
       </div>
     </div>
   );
