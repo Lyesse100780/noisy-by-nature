@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
 import { openNewsletterPopup } from "@/lib/newsletter";
 import { shopProducts } from "@/lib/shop-products";
@@ -24,12 +24,8 @@ export default function ProductPage() {
   // Safe media array
   const media = useMemo(() => product?.images ?? [], [product]);
 
-  const [activeMedia, setActiveMedia] = useState<string>("");
-
-  // Keep activeMedia in sync when product changes
-  useEffect(() => {
-    setActiveMedia(media[0] ?? "");
-  }, [slug, media]);
+  const [selectedMedia, setSelectedMedia] = useState<Record<string, string>>({});
+  const activeMedia = (slug ? selectedMedia[slug] : undefined) || media[0] || "";
 
   if (!product) {
     return (
@@ -101,7 +97,9 @@ export default function ProductPage() {
                 <button
                   key={`${m}-${i}`}
                   type="button"
-                  onClick={() => setActiveMedia(m)}
+                  onClick={() => {
+                    if (slug) setSelectedMedia((current) => ({ ...current, [slug]: m }));
+                  }}
                   className={`flex-shrink-0 snap-center w-20 h-20 rounded-md border-2 overflow-hidden transition-all duration-300 ${
                     activeMedia === m
                       ? "border-noisy-copper opacity-100"
