@@ -5,9 +5,50 @@ const specs = [
   "Class-compliant MIDI over USB",
   "Three 100mm Alps faders",
   "Change CC assignments on the fly and choose between five response curves — no software required",
+  "Black western floral Tolex finish with a handmade studio-tool feel",
+  "Compact desktop footprint: 20 × 9.6 × 2 cm",
   "Compatible with all major DAWs (Bitwig, Cubase, Ableton Live, Logic Pro, Pro Tools, Reaper, Studio One)",
   "Compatible with After Effects via MIDI2AE",
   "Extra-low profile desktop format designed for long studio sessions",
+];
+
+const curveDiagrams = [
+  {
+    label: "Linear",
+    src: "/images/brand/fad3rs-curves/dark/1.linear_curve_smooth_dark.png",
+    alt: "FAD3RS linear MIDI curve diagram",
+  },
+  {
+    label: "Log",
+    src: "/images/brand/fad3rs-curves/dark/2.log_curve_smooth_dark.png",
+    alt: "FAD3RS logarithmic MIDI curve diagram",
+  },
+  {
+    label: "Expo",
+    src: "/images/brand/fad3rs-curves/dark/3.exponential_curve_smooth_dark.png",
+    alt: "FAD3RS exponential MIDI curve diagram",
+  },
+  {
+    label: "S-Curve",
+    src: "/images/brand/fad3rs-curves/dark/4.s_curve_smooth_dark.png",
+    alt: "FAD3RS S MIDI curve diagram",
+  },
+  {
+    label: "65",
+    src: "/images/brand/fad3rs-curves/dark/5.curve_65_smooth_dark.png",
+    alt: "FAD3RS 65 MIDI curve diagram",
+  },
+];
+
+const midiWarningImages = [
+  {
+    src: "/images/brand/fad3rs-midi-warning/fad3rs-midi-output-warning-1.png",
+    alt: "Example DAW MIDI setup with FAD3RS Send To set to None",
+  },
+  {
+    src: "/images/brand/fad3rs-midi-warning/fad3rs-midi-output-warning-2.png",
+    alt: "Example DAW MIDI port setup with FAD3RS MIDI output disabled",
+  },
 ];
 
 const workflows = [
@@ -121,6 +162,77 @@ export default function Fad3rsPage() {
                   {workflow}
                 </p>
               ))}
+            </div>
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="rounded-2xl border border-[#8f5c32]/18 bg-[radial-gradient(circle_at_top_left,rgba(213,160,106,0.08),transparent_34%),linear-gradient(180deg,rgba(18,12,8,0.72),rgba(10,7,5,0.42))] p-5 shadow-[0_28px_72px_rgba(0,0,0,0.24)] md:p-6">
+              <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#c69054]/82">
+                    Response curves
+                  </p>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#e6d9c5]/58">
+                    Five onboard fader responses, from precise linear control to fast throws and expressive shaped moves.
+                  </p>
+                </div>
+                <p className="[font-family:var(--font-inter)] text-[0.54rem] uppercase tracking-[0.2em] text-[#d5a06a]/56 md:hidden">
+                  Swipe
+                </p>
+              </div>
+
+              <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
+                {curveDiagrams.map((diagram) => (
+                  <figure
+                    key={diagram.src}
+                    className="w-[15rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/78 p-3 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto"
+                  >
+                    <div className="overflow-hidden rounded-lg border border-[#8f5c32]/14 bg-[#120c08]">
+                      <img src={diagram.src} alt={diagram.alt} className="block aspect-[1.45] w-full object-contain p-1" />
+                    </div>
+                    <figcaption className="mt-3 [font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.18em] text-[#d5a06a]/78">
+                      {diagram.label}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 overflow-hidden rounded-2xl border border-[#d5a06a]/24 bg-[radial-gradient(circle_at_top_left,rgba(213,160,106,0.12),transparent_32%),linear-gradient(180deg,rgba(24,14,10,0.86),rgba(10,7,5,0.54))] p-5 shadow-[0_28px_72px_rgba(0,0,0,0.24)] md:p-6">
+              <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+                <div>
+                  <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/86">
+                    MIDI setup note
+                  </p>
+                  <div className="mt-4 space-y-4 text-sm leading-7 text-[#e6d9c5]/68 md:text-base md:leading-8">
+                    <p>
+                      FAD3RS is class-compliant, meaning it is automatically detected by Windows 10/11 and macOS.
+                    </p>
+                    <p>
+                      However, make sure your DAW does not send any MIDI data to FAD3RS. In some cases, this may cause instability or even freeze your DAW.
+                    </p>
+                    <p>
+                      To prevent this, open your DAW’s MIDI settings and disable MIDI output to FAD3RS.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="[font-family:var(--font-inter)] mb-3 text-[0.54rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/58">
+                    Example settings
+                  </p>
+                  <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:px-0 md:pb-0">
+                    {midiWarningImages.map((image) => (
+                      <figure
+                        key={image.src}
+                        className="w-[18rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/76 p-2 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto"
+                      >
+                        <img src={image.src} alt={image.alt} className="block w-full rounded-lg object-contain" />
+                      </figure>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

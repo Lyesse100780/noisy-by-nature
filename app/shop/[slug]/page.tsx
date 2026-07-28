@@ -25,7 +25,21 @@ export default function ProductPage() {
   const media = useMemo(() => product?.images ?? [], [product]);
 
   const [selectedMedia, setSelectedMedia] = useState<Record<string, string>>({});
+  const [selectedUsb, setSelectedUsb] = useState<"usb-a" | "usb-c" | "">("");
   const activeMedia = (slug ? selectedMedia[slug] : undefined) || media[0] || "";
+  const activeMediaIndex = Math.max(0, media.indexOf(activeMedia));
+  const requiresUsbChoice = product?.slug === "fad3rs";
+  const usbOptions = requiresUsbChoice ? product?.variants ?? [] : [];
+  const selectedUsbOption = usbOptions.find((option) => option.id === selectedUsb);
+  const selectedStockQuantity = selectedUsbOption?.stockQuantity ?? product?.stockQuantity ?? 0;
+  const selectedUsbSoldOut = requiresUsbChoice && Boolean(selectedUsb) && selectedStockQuantity <= 0;
+  const fad3rsFullySoldOut = requiresUsbChoice && (product?.stockQuantity ?? 0) <= 0;
+
+  const selectMediaAt = (index: number) => {
+    if (!slug || media.length === 0) return;
+    const nextIndex = (index + media.length) % media.length;
+    setSelectedMedia((current) => ({ ...current, [slug]: media[nextIndex] }));
+  };
 
   if (!product) {
     return (
@@ -83,6 +97,39 @@ export default function ProductPage() {
                     </span>
                   </div>
                 )}
+                {media.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => selectMediaAt(activeMediaIndex - 1)}
+                      className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#d5a06a]/34 bg-[#0c0806]/58 text-xl leading-none text-[#efd1a2] backdrop-blur-sm transition hover:border-[#d5a06a]/68 hover:bg-[#0c0806]/78"
+                      aria-label="Previous FAD3RS image"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => selectMediaAt(activeMediaIndex + 1)}
+                      className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#d5a06a]/34 bg-[#0c0806]/58 text-xl leading-none text-[#efd1a2] backdrop-blur-sm transition hover:border-[#d5a06a]/68 hover:bg-[#0c0806]/78"
+                      aria-label="Next FAD3RS image"
+                    >
+                      ›
+                    </button>
+                    <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                      {media.map((m, index) => (
+                        <button
+                          key={`dot-${m}`}
+                          type="button"
+                          onClick={() => selectMediaAt(index)}
+                          className={`h-1.5 rounded-full transition-all ${
+                            index === activeMediaIndex ? "w-5 bg-[#d5a06a]" : "w-1.5 bg-[#efd1a2]/42"
+                          }`}
+                          aria-label={`View FAD3RS image ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <div className="w-full h-[50vh] flex items-center justify-center bg-[#201915] text-[#E6D9C5]/60">
@@ -97,9 +144,7 @@ export default function ProductPage() {
                 <button
                   key={`${m}-${i}`}
                   type="button"
-                  onClick={() => {
-                    if (slug) setSelectedMedia((current) => ({ ...current, [slug]: m }));
-                  }}
+                  onClick={() => selectMediaAt(i)}
                   className={`flex-shrink-0 snap-center w-20 h-20 rounded-md border-2 overflow-hidden transition-all duration-300 ${
                     activeMedia === m
                       ? "border-noisy-copper opacity-100"
@@ -147,40 +192,78 @@ export default function ProductPage() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-3">
-          <AddToCartButton
-            slug={product.slug}
-            available={product.available}
-            maxQuantity={product.stockQuantity}
-            label="Add to Cart"
-            className={`inline-block px-10 py-4 rounded-md transition-all duration-300 font-body text-sm tracking-widest uppercase shadow-md ${
-              product.available && product.stockQuantity > 0
-                ? "bg-noisy-copper hover:bg-noisy-copper/80 text-white hover:shadow-copper/30"
-                : "bg-[#3a2f27] text-white/40 cursor-not-allowed opacity-60"
-            }`}
-          />
-          {product.available && product.stockQuantity > 0 && (
-            <Link
-              href="/cart"
-              className="inline-block rounded-md border border-noisy-copper/50 px-10 py-4 font-body text-sm uppercase tracking-widest text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/10"
-            >
-              View Cart
-            </Link>
+          {requiresUsbChoice && (
+            <div className="rounded-md border border-[#8f5c32]/20 bg-[#120c08]/32 p-4">
+              <p className="font-body text-xs font-medium uppercase tracking-[0.22em] text-[#d5a06a]/78">
+                Choose USB cable
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {usbOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setSelectedUsb(option.id)}
+                    className={`rounded-md border px-4 py-3 text-left transition-all ${
+                      selectedUsb === option.id
+                        ? "border-noisy-copper bg-noisy-copper/12 text-[#efd1a2]"
+                        : "border-[#8f5c32]/24 bg-[#0f0a07]/60 text-[#e6d9c5]/72 hover:border-noisy-copper/50 hover:text-[#efd1a2]"
+                    } ${!option.available ? "opacity-60" : ""}`}
+                  >
+                    <span className="block font-body text-sm font-medium uppercase tracking-[0.18em]">{option.label}</span>
+                    <span className="mt-1 block text-xs leading-5 text-[#e6d9c5]/56">
+                      {option.available ? option.detail : `${option.detail} · sold out`}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {!selectedUsb && (
+                <p className="mt-3 text-xs leading-5 text-[#d5a06a]/66">
+                  Select USB-A or USB-C before adding FAD3RS to the cart.
+                </p>
+              )}
+            </div>
           )}
-          </div>
 
-          {(!product.available || product.stockQuantity < 1) && (
-            <></>
-          )}
-          {product.slug === "fad3rs" && product.stockQuantity === 0 && (
-            <button
-              type="button"
-              onClick={() => openNewsletterPopup("fad3rs")}
-              className="inline-block rounded-md border border-noisy-copper/60 px-8 py-3 font-body text-xs uppercase tracking-[0.2em] text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/8 hover:border-noisy-copper/80"
-            >
-              Notify me when available
-            </button>
-          )}
+          <div className="flex flex-wrap gap-3">
+            {fad3rsFullySoldOut || selectedUsbSoldOut ? (
+              <button
+                type="button"
+                onClick={() => openNewsletterPopup("fad3rs")}
+                className="inline-block rounded-md border border-[#c69054]/46 bg-[#d5a06a]/8 px-10 py-4 font-body text-sm uppercase tracking-widest text-noisy-copper transition-all duration-300 hover:border-[#d5a06a]/76 hover:bg-[#d5a06a]/12 hover:text-[#efd1a2]"
+              >
+                Notify me when available
+              </button>
+            ) : (
+              <AddToCartButton
+                slug={product.slug}
+                available={product.available}
+                maxQuantity={selectedStockQuantity}
+                label="Add to Cart"
+                disabledLabel={requiresUsbChoice && !selectedUsb ? "Choose USB Type" : undefined}
+                cartOptions={
+                  requiresUsbChoice && selectedUsbOption
+                    ? {
+                        variantId: selectedUsbOption.id,
+                        variantLabel: selectedUsbOption.variantLabel,
+                      }
+                    : undefined
+                }
+                className={`inline-block px-10 py-4 rounded-md transition-all duration-300 font-body text-sm tracking-widest uppercase shadow-md ${
+                  product.available && selectedStockQuantity > 0 && (!requiresUsbChoice || selectedUsb)
+                    ? "bg-noisy-copper hover:bg-noisy-copper/80 text-white hover:shadow-copper/30"
+                    : "bg-[#3a2f27] text-white/40 cursor-not-allowed opacity-60"
+                }`}
+              />
+            )}
+            {product.available && product.stockQuantity > 0 && (
+              <Link
+                href="/cart"
+                className="inline-block rounded-md border border-noisy-copper/50 px-10 py-4 font-body text-sm uppercase tracking-widest text-noisy-copper transition-all duration-300 hover:bg-noisy-copper/10"
+              >
+                View Cart
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </section>
