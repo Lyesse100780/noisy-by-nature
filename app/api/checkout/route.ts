@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { getShopProduct, type ShopProduct } from "@/lib/shop-products";
+import { getShopProduct, getShopProductStockQuantity, type ShopProduct } from "@/lib/shop-products";
 import { getShippingCountry, getShippingOptions, type ShippingMethodId } from "@/lib/shipping";
 
 type CheckoutItem = {
   slug: string;
   quantity?: number;
+  variantId?: string;
+  variantLabel?: string;
 };
 
 export async function POST(request: Request) {
@@ -37,10 +39,25 @@ export async function POST(request: Request) {
 
       const image = product.images[0] ? new URL(product.images[0], siteUrl).toString() : undefined;
       const quantity = Math.max(1, Math.min(9, Number(item.quantity) || 1));
+      const variantLabel = typeof item.variantLabel === "string" ? item.variantLabel : undefined;
+      const variantId = typeof item.variantId === "string" ? item.variantId : undefined;
 
-      if (quantity > product.stockQuantity) {
+      if (product.slug === "fad3rs" && !["usb-a", "usb-c"].includes(variantId ?? "")) {
+        return NextResponse.json({ error: "Please choose USB-A or USB-C for FAD3RS." }, { status: 400 });
+      }
+
+      const availableStock = getShopProductStockQuantity(product, variantId);
+
+      if (availableStock <= 0) {
         return NextResponse.json(
-          { error: `${product.name} is limited to ${product.stockQuantity} in stock.` },
+          { error: `${product.name}${variantLabel ? ` - ${variantLabel}` : ""} is currently unavailable.` },
+          { status: 400 },
+        );
+      }
+
+      if (quantity > availableStock) {
+        return NextResponse.json(
+          { error: `${product.name}${variantLabel ? ` - ${variantLabel}` : ""} is limited to ${availableStock} in stock.` },
           { status: 400 },
         );
       }
@@ -51,10 +68,12 @@ export async function POST(request: Request) {
           currency: product.currency,
           unit_amount: product.priceAmount,
           product_data: {
-            name: product.name,
+            name: variantLabel ? `${product.name} - ${variantLabel}` : product.name,
             images: image ? [image] : undefined,
             metadata: {
               slug: product.slug,
+              variantId: variantId ?? "",
+              variantLabel: variantLabel ?? "",
             },
           },
         },

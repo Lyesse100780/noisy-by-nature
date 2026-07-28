@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addToCart } from "@/lib/cart";
+import { addToCart, type AddToCartOptions } from "@/lib/cart";
 
 type AddToCartButtonProps = {
   slug: string;
@@ -10,6 +10,8 @@ type AddToCartButtonProps = {
   className?: string;
   label?: string;
   soldOutLabel?: string;
+  disabledLabel?: string;
+  cartOptions?: AddToCartOptions;
 };
 
 export default function AddToCartButton({
@@ -19,9 +21,12 @@ export default function AddToCartButton({
   className,
   label = "Add to Cart",
   soldOutLabel = "Sold out",
+  disabledLabel,
+  cartOptions,
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
-  const canAdd = available && maxQuantity > 0;
+  const isAvailable = available && maxQuantity > 0;
+  const canAdd = isAvailable && !disabledLabel;
 
   return (
     <button
@@ -31,13 +36,13 @@ export default function AddToCartButton({
         event.preventDefault();
         event.stopPropagation();
         if (!canAdd) return;
-        addToCart(slug);
+        addToCart(slug, 1, cartOptions, maxQuantity);
         setAdded(true);
         window.setTimeout(() => setAdded(false), 1400);
       }}
       className={className}
     >
-      {canAdd ? (added ? "Added" : label) : soldOutLabel}
+      {canAdd ? (added ? "Added" : label) : disabledLabel || soldOutLabel}
     </button>
   );
 }

@@ -54,7 +54,7 @@ export default function NotifyPopup({ isOpen, onClose, product }: NotifyPopupPro
           text: data.error || "Something went wrong. Please try again.",
         });
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: "error",
         text: "Connection error. Please try again.",

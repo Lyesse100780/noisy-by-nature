@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import SiteNav from "@/components/SiteNav";
-import { CartItem, readCart, removeFromCart, writeCart } from "@/lib/cart";
-import { getShopProduct } from "@/lib/shop-products";
+import { CartItem, getCartItemKey, readCart, removeFromCart, writeCart } from "@/lib/cart";
+import { getShopProduct, getShopProductStockQuantity } from "@/lib/shop-products";
 import { formatAmount, getShippingOptions, shippingCountries, type ShippingMethodId } from "@/lib/shipping";
 
 export default function CartPage() {
@@ -45,18 +45,18 @@ export default function CartPage() {
     }
   }, [shippingMethod, shippingOptions]);
 
-  const updateQuantity = (slug: string, quantity: number) => {
-    const product = getShopProduct(slug);
-    const maxQuantity = product?.stockQuantity ?? 1;
+  const updateQuantity = (key: string, quantity: number) => {
+    const entry = cartProducts.find(({ item }) => getCartItemKey(item) === key);
+    const maxQuantity = entry ? getShopProductStockQuantity(entry.product, entry.item.variantId) : 1;
     const next = items.map((item) =>
-      item.slug === slug ? { ...item, quantity: Math.max(1, Math.min(maxQuantity, quantity)) } : item,
+      getCartItemKey(item) === key ? { ...item, quantity: Math.max(1, Math.min(maxQuantity, quantity)) } : item,
     );
     setItems(next);
     writeCart(next);
   };
 
-  const removeItem = (slug: string) => {
-    const next = removeFromCart(slug);
+  const removeItem = (key: string) => {
+    const next = removeFromCart(key);
     setItems(next);
   };
 
@@ -138,9 +138,13 @@ export default function CartPage() {
                 </div>
               ) : (
                 <div className="mt-7 space-y-5">
-                  {cartProducts.map(({ item, product }) => (
+                  {cartProducts.map(({ item, product }) => {
+                    const itemKey = getCartItemKey(item);
+                    const availableStock = getShopProductStockQuantity(product, item.variantId);
+
+                    return (
                     <div
-                      key={product.slug}
+                      key={itemKey}
                       className="grid gap-4 border border-[#8f5c32]/18 bg-[#120c08]/22 p-4 sm:grid-cols-[8rem_1fr_auto]"
                     >
                       <img
@@ -153,12 +157,17 @@ export default function CartPage() {
                           {product.name}
                         </h2>
                         <p className="mt-3 text-sm text-[#e6d9c5]/72">{product.price}</p>
+                        {item.variantLabel && (
+                          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#d5a06a]/70">
+                            {item.variantLabel}
+                          </p>
+                        )}
                         {!product.available && (
                           <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#b6784d]">Currently unavailable</p>
                         )}
-                        {product.available && product.stockQuantity <= 3 && (
+                        {product.available && availableStock <= 3 && (
                           <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#d5a06a]/68">
-                            {product.stockQuantity} in stock
+                            {availableStock} in stock
                           </p>
                         )}
                       </div>
@@ -167,24 +176,25 @@ export default function CartPage() {
                           Quantity
                         </label>
                         <input
-                          id={`quantity-${product.slug}`}
+                          id={`quantity-${itemKey}`}
                           type="number"
                           min={1}
-                          max={product.stockQuantity}
+                          max={availableStock}
                           value={item.quantity}
-                          onChange={(event) => updateQuantity(product.slug, Number(event.target.value))}
+                          onChange={(event) => updateQuantity(itemKey, Number(event.target.value))}
                           className="w-16 border border-[#8f5c32]/24 bg-[#0f0a07] px-3 py-2 text-center text-sm text-[#e6d9c5] outline-none focus:border-[#d5a06a]/60"
                         />
                         <button
                           type="button"
-                          onClick={() => removeItem(product.slug)}
+                          onClick={() => removeItem(itemKey)}
                           className="[font-family:var(--font-inter)] text-[0.58rem] uppercase tracking-[0.2em] text-[#d5a06a]/70 transition hover:text-[#efd1a2]"
                         >
                           Remove
                         </button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

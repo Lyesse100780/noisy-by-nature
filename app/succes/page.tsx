@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ClearCartOnSuccess from "@/components/ClearCartOnSuccess";
 
 export default function SuccessPage() {
@@ -12,12 +13,12 @@ export default function SuccessPage() {
           Thank you for your order. You&apos;ll receive a confirmation email
           shortly with the details of your purchase.
         </p>
-        <a
+        <Link
           href="/shop"
           className="inline-block mt-4 px-6 py-3 rounded-md border border-noisy-copper/60 text-sm uppercase tracking-wide font-body hover:bg-noisy-copper hover:text-[#1A1410] transition-all"
         >
           Back to shop
-        </a>
+        </Link>
       </div>
     </div>
   );

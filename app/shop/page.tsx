@@ -70,17 +70,12 @@ export default function Shop() {
                     className="h-full w-full object-cover object-center opacity-88 grayscale-[0.18] transition duration-500 group-hover:scale-[1.018] group-hover:opacity-96"
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,8,6,0.02),rgba(12,8,6,0.34)),linear-gradient(90deg,rgba(14,9,7,0.16),transparent_52%,rgba(14,9,7,0.16))]" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-[#0c0806]/30">
-                    <span className="border border-[#d5a06a]/46 bg-[#120c08]/74 px-5 py-2 [font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.28em] text-[#efd1a2] shadow-[0_18px_42px_rgba(0,0,0,0.42)]">
-                      Out of Stock
-                    </span>
-                  </div>
                 </Link>
                 <div className="flex flex-1 flex-col justify-between p-5">
                   <div>
                     <Link href="/shop/fad3rs">
                       <h2 className="[font-family:var(--font-inter)] text-lg font-medium uppercase tracking-[0.2em] text-[#e2c8a2]">
-                        FAD3RS
+                        FAD3RS Black Edition
                       </h2>
                     </Link>
                     <p className="mt-3 text-sm leading-6 text-[#e6d9c5]/66">
@@ -89,13 +84,22 @@ export default function Shop() {
                   </div>
                   <div className="mt-6">
                     <p className="text-sm font-medium text-[#e6d9c5]/84">EUR 179 launch price</p>
-                    <button
-                      type="button"
-                      onClick={() => openNewsletterPopup("fad3rs")}
-                      className="mt-4 block w-full border border-[#c69054]/46 bg-[#d5a06a]/8 px-5 py-2.5 text-center [font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.2em] text-[#d5a06a] transition hover:border-[#d5a06a]/76 hover:bg-[#d5a06a]/12 hover:text-[#efd1a2]"
-                    >
-                      Notify me when available
-                    </button>
+                    {controllerProducts[0].available ? (
+                      <Link
+                        href="/shop/fad3rs"
+                        className="mt-4 block w-full border border-[#c69054]/46 bg-[#d5a06a]/8 px-5 py-2.5 text-center [font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.2em] text-[#d5a06a] transition hover:border-[#d5a06a]/76 hover:bg-[#d5a06a]/12 hover:text-[#efd1a2]"
+                      >
+                        Choose USB option
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => openNewsletterPopup("fad3rs")}
+                        className="mt-4 block w-full border border-[#c69054]/46 bg-[#d5a06a]/8 px-5 py-2.5 text-center [font-family:var(--font-inter)] text-[0.62rem] font-medium uppercase tracking-[0.2em] text-[#d5a06a] transition hover:border-[#d5a06a]/76 hover:bg-[#d5a06a]/12 hover:text-[#efd1a2]"
+                      >
+                        Notify me when available
+                      </button>
+                    )}
                   </div>
                 </div>
               </article>

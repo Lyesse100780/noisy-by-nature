@@ -1,4 +1,5 @@
 import { products as rawCaseProducts } from "@/app/data/products";
+import { fad3rsUsbVariants, getFad3rsRemainingStock, type Fad3rsUsbVariant } from "@/lib/fad3rs-inventory";
 
 type RawProduct = (typeof rawCaseProducts)[number];
 
@@ -8,6 +9,7 @@ export type ShopProduct = RawProduct & {
   available: boolean;
   stockQuantity: number;
   category: "controller" | "case";
+  variants?: Fad3rsUsbVariant[];
 };
 
 const productCheckoutData: Record<
@@ -26,12 +28,12 @@ const productCheckoutData: Record<
 export const controllerProducts: ShopProduct[] = [
   {
     slug: "fad3rs",
-    name: "FAD3RS",
+    name: "FAD3RS Black Edition",
     price: "EUR 179 · Limited First Runs",
     priceAmount: 17900,
     currency: "eur",
-    available: false,
-    stockQuantity: 0,
+    available: getFad3rsRemainingStock() > 0,
+    stockQuantity: getFad3rsRemainingStock(),
     category: "controller",
     description: `
 A class-compliant MIDI controller built around three 100mm Alps faders for expressive automation and precise control.`,
@@ -40,9 +42,17 @@ A class-compliant MIDI controller built around three 100mm Alps faders for expre
       "Three 100mm Alps faders",
       "Change CC assignments on the fly",
       "Five response curves",
+      "Black western floral Tolex finish",
+      "Dimensions: 20 × 9.6 × 2 cm",
+      "Includes an approx. 1.8 m USB cable",
       "Extra-low profile desktop format",
     ],
-    images: ["/images/brand/fad3rs-img1.png"],
+    variants: fad3rsUsbVariants,
+    images: [
+      "/images/brand/fad3rs-black-edition/fad3rs-black-edition-1.png",
+      "/images/brand/fad3rs-black-edition/fad3rs-black-edition-2.png",
+      "/images/brand/fad3rs-black-edition/fad3rs-black-edition-3.png",
+    ],
   },
 ];
 
@@ -62,4 +72,12 @@ export const shopProducts: ShopProduct[] = [...controllerProducts, ...caseProduc
 
 export function getShopProduct(slug: string) {
   return shopProducts.find((product) => product.slug === slug);
+}
+
+export function getShopProductStockQuantity(product: ShopProduct, variantId?: string) {
+  if (product.variants?.length && variantId) {
+    return product.variants.find((variant) => variant.id === variantId)?.stockQuantity ?? 0;
+  }
+
+  return product.stockQuantity;
 }
