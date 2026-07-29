@@ -60,7 +60,7 @@ const workflows = [
 
 export default function Fad3rsPage() {
   return (
-    <main className="topographic-surface min-h-screen bg-[#1A1410] text-[#F5EBDD]">
+    <main className="topographic-surface min-h-screen overflow-x-hidden bg-[#1A1410] text-[#F5EBDD]">
       <section className="site-hero relative overflow-hidden bg-[#100b08] text-[#f4ead8] [--hero-desktop-height:28vh] [--hero-mobile-height:8.75rem]">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-100"
@@ -131,9 +131,9 @@ export default function Fad3rsPage() {
         </div>
       </section>
 
-      <section className="px-6 pb-20 md:px-12 md:pb-28 lg:px-20">
-        <div className="mx-auto grid max-w-7xl gap-14 border-t border-[#8f5c32]/18 pt-12 md:grid-cols-2 md:gap-20">
-          <div>
+      <section className="px-4 pb-20 sm:px-6 md:px-12 md:pb-28 lg:px-20">
+        <div className="mx-auto grid max-w-7xl min-w-0 gap-14 border-t border-[#8f5c32]/18 pt-12 md:grid-cols-2 md:gap-20">
+          <div className="min-w-0">
             <p className="[font-family:var(--font-inter)] mb-8 text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
               Key specs
             </p>
@@ -149,7 +149,7 @@ export default function Fad3rsPage() {
             </ul>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <p className="[font-family:var(--font-inter)] mb-8 text-[0.62rem] font-medium uppercase tracking-[0.32em] text-[#c69054]/82">
               Workflow
             </p>
@@ -157,7 +157,7 @@ export default function Fad3rsPage() {
               {workflows.map((workflow) => (
                 <p
                   key={workflow}
-                  className="max-w-xl text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/72 md:text-lg"
+                  className="max-w-xl break-words text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/72 md:text-lg"
                 >
                   {workflow}
                 </p>
@@ -165,14 +165,14 @@ export default function Fad3rsPage() {
             </div>
           </div>
 
-          <div className="md:col-span-2">
-            <div className="rounded-2xl border border-[#8f5c32]/18 bg-[radial-gradient(circle_at_top_left,rgba(213,160,106,0.08),transparent_34%),linear-gradient(180deg,rgba(18,12,8,0.72),rgba(10,7,5,0.42))] p-5 shadow-[0_28px_72px_rgba(0,0,0,0.24)] md:p-6">
+          <div className="min-w-0 md:col-span-2">
+            <div className="max-w-full overflow-hidden rounded-2xl border border-[#8f5c32]/18 bg-[radial-gradient(circle_at_top_left,rgba(213,160,106,0.08),transparent_34%),linear-gradient(180deg,rgba(18,12,8,0.72),rgba(10,7,5,0.42))] p-4 shadow-[0_28px_72px_rgba(0,0,0,0.24)] sm:p-5 md:p-6">
               <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#c69054]/82">
                     Response curves
                   </p>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#e6d9c5]/58">
+                  <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-[#e6d9c5]/58">
                     Five onboard fader responses, from precise linear control to fast throws and expressive shaped moves.
                   </p>
                 </div>
@@ -181,11 +181,11 @@ export default function Fad3rsPage() {
                 </p>
               </div>
 
-              <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
+              <div className="flex max-w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
                 {curveDiagrams.map((diagram) => (
                   <figure
                     key={diagram.src}
-                    className="w-[15rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/78 p-3 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto"
+                    className="w-[74vw] max-w-[18rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/78 p-3 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto md:max-w-none"
                   >
                     <div className="overflow-hidden rounded-lg border border-[#8f5c32]/14 bg-[#120c08]">
                       <img src={diagram.src} alt={diagram.alt} className="block aspect-[1.45] w-full object-contain p-1" />
@@ -198,13 +198,13 @@ export default function Fad3rsPage() {
               </div>
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-2xl border border-[#d5a06a]/24 bg-[radial-gradient(circle_at_top_left,rgba(213,160,106,0.12),transparent_32%),linear-gradient(180deg,rgba(24,14,10,0.86),rgba(10,7,5,0.54))] p-5 shadow-[0_28px_72px_rgba(0,0,0,0.24)] md:p-6">
-              <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-                <div>
+            <div className="mt-6 max-w-full overflow-hidden rounded-2xl border border-[#d5a06a]/24 bg-[radial-gradient(circle_at_top_left,rgba(213,160,106,0.12),transparent_32%),linear-gradient(180deg,rgba(24,14,10,0.86),rgba(10,7,5,0.54))] p-4 shadow-[0_28px_72px_rgba(0,0,0,0.24)] sm:p-5 md:p-6">
+              <div className="grid min-w-0 gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+                <div className="min-w-0">
                   <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/86">
                     MIDI setup note
                   </p>
-                  <div className="mt-4 space-y-4 text-sm leading-7 text-[#e6d9c5]/68 md:text-base md:leading-8">
+                  <div className="mt-4 space-y-4 break-words text-sm leading-7 text-[#e6d9c5]/68 md:text-base md:leading-8">
                     <p>
                       FAD3RS is class-compliant, meaning it is automatically detected by Windows 10/11 and macOS.
                     </p>
@@ -217,15 +217,15 @@ export default function Fad3rsPage() {
                   </div>
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <p className="[font-family:var(--font-inter)] mb-3 text-[0.54rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/58">
                     Example settings
                   </p>
-                  <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-2 md:px-0 md:pb-0">
+                  <div className="flex max-w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
                     {midiWarningImages.map((image) => (
                       <figure
                         key={image.src}
-                        className="w-[18rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/76 p-2 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto"
+                        className="w-[78vw] max-w-[22rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/76 p-2 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto md:max-w-none"
                       >
                         <img src={image.src} alt={image.alt} className="block w-full rounded-lg object-contain" />
                       </figure>
