@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Fad3rsMidiLightbox from "@/components/Fad3rsMidiLightbox";
 import SiteNav from "@/components/SiteNav";
 
 const specs = [
@@ -221,18 +222,7 @@ export default function Fad3rsPage() {
                   <p className="[font-family:var(--font-inter)] mb-3 text-[0.54rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/58">
                     Example settings
                   </p>
-                  <div className="flex max-w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
-                    {midiWarningImages.map((image) => (
-                      <figure
-                        key={image.src}
-                        className="w-[78vw] max-w-[22rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/76 p-2 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto md:max-w-none"
-                      >
-                        <a href={image.src} target="_blank" rel="noreferrer" className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d5a06a]/70">
-                          <img src={image.src} alt={image.alt} className="block w-full rounded-lg object-contain" />
-                        </a>
-                      </figure>
-                    ))}
-                  </div>
+                  <Fad3rsMidiLightbox images={midiWarningImages} />
                 </div>
               </div>
             </div>
