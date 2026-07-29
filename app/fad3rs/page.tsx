@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Fad3rsMidiLightbox from "@/components/Fad3rsMidiLightbox";
 import SiteNav from "@/components/SiteNav";
 
 const specs = [
@@ -141,7 +142,7 @@ export default function Fad3rsPage() {
               {specs.map((spec) => (
                 <li
                   key={spec}
-                  className="border-b border-[#8f5c32]/14 pb-5 text-[1rem] font-light leading-relaxed text-[#e6d9c5]/74"
+                  className="border-b border-[#8f5c32]/14 pb-5 text-[1rem] font-light leading-relaxed text-[#e6d9c5]/74 [overflow-wrap:anywhere]"
                 >
                   {spec}
                 </li>
@@ -157,7 +158,7 @@ export default function Fad3rsPage() {
               {workflows.map((workflow) => (
                 <p
                   key={workflow}
-                  className="max-w-xl break-words text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/72 md:text-lg"
+                  className="max-w-xl break-words text-[1.02rem] font-light leading-relaxed text-[#e6d9c5]/72 [overflow-wrap:anywhere] md:text-lg"
                 >
                   {workflow}
                 </p>
@@ -172,7 +173,7 @@ export default function Fad3rsPage() {
                   <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#c69054]/82">
                     Response curves
                   </p>
-                  <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-[#e6d9c5]/58">
+                  <p className="mt-2 max-w-2xl break-words text-sm leading-6 text-[#e6d9c5]/58 [overflow-wrap:anywhere]">
                     Five onboard fader responses, from precise linear control to fast throws and expressive shaped moves.
                   </p>
                 </div>
@@ -204,7 +205,7 @@ export default function Fad3rsPage() {
                   <p className="[font-family:var(--font-inter)] text-[0.58rem] font-medium uppercase tracking-[0.28em] text-[#d5a06a]/86">
                     MIDI setup note
                   </p>
-                  <div className="mt-4 space-y-4 break-words text-sm leading-7 text-[#e6d9c5]/68 md:text-base md:leading-8">
+                  <div className="mt-4 space-y-4 break-words text-sm leading-7 text-[#e6d9c5]/68 [overflow-wrap:anywhere] md:text-base md:leading-8">
                     <p>
                       FAD3RS is class-compliant, meaning it is automatically detected by Windows 10/11 and macOS.
                     </p>
@@ -221,18 +222,7 @@ export default function Fad3rsPage() {
                   <p className="[font-family:var(--font-inter)] mb-3 text-[0.54rem] font-medium uppercase tracking-[0.22em] text-[#d5a06a]/58">
                     Example settings
                   </p>
-                  <div className="flex max-w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
-                    {midiWarningImages.map((image) => (
-                      <figure
-                        key={image.src}
-                        className="w-[78vw] max-w-[22rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/76 p-2 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto md:max-w-none"
-                      >
-                        <a href={image.src} target="_blank" rel="noreferrer" className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d5a06a]/70">
-                          <img src={image.src} alt={image.alt} className="block w-full rounded-lg object-contain" />
-                        </a>
-                      </figure>
-                    ))}
-                  </div>
+                  <Fad3rsMidiLightbox images={midiWarningImages} />
                 </div>
               </div>
             </div>
