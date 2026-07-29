@@ -209,12 +209,20 @@ export default function ProductPage() {
                         : "border-[#8f5c32]/24 bg-[#0f0a07]/60 text-[#e6d9c5]/72 hover:border-noisy-copper/50 hover:text-[#efd1a2]"
                     } ${!option.available ? "opacity-60" : ""}`}
                   >
-                    <span className="block font-body text-sm font-medium uppercase tracking-[0.18em]">{option.label}</span>
-                    <span className="mt-1 block text-xs leading-5 text-[#e6d9c5]/56">
-                      {option.available ? option.detail : `${option.detail} · sold out`}
+                    <span className="block text-center font-body text-sm font-medium uppercase tracking-[0.18em]">
+                      {option.available ? option.label : `${option.label} · sold out`}
                     </span>
                   </button>
                 ))}
+              </div>
+              <div className="mt-3 flex gap-3 rounded-md border border-[#d5a06a]/26 bg-[#d5a06a]/8 px-3 py-3 text-xs leading-5 text-[#e6d9c5]/66">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#d5a06a]/42 bg-[#0f0a07]/62 text-[0.68rem] text-[#d5a06a]">
+                  !
+                </span>
+                <p>
+                  <span className="font-medium uppercase tracking-[0.16em] text-[#d5a06a]/86">Note:</span>{" "}
+                  for technical reasons, the USB cable is fixed to the unit. If you need to connect it to different ports, a USB-A to USB-C adapter works perfectly.
+                </p>
               </div>
               {!selectedUsb && (
                 <p className="mt-3 text-xs leading-5 text-[#d5a06a]/66">
