@@ -176,16 +176,16 @@ export default function Fad3rsPage() {
                     Five onboard fader responses, from precise linear control to fast throws and expressive shaped moves.
                   </p>
                 </div>
-                <p className="[font-family:var(--font-inter)] text-[0.54rem] uppercase tracking-[0.2em] text-[#d5a06a]/56 md:hidden">
+                <p className="[font-family:var(--font-inter)] text-[0.54rem] uppercase tracking-[0.2em] text-[#d5a06a]/56 xl:hidden">
                   Swipe
                 </p>
               </div>
 
-              <div className="flex max-w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
+              <div className="flex max-w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] xl:grid xl:grid-cols-5 xl:gap-4 xl:overflow-visible xl:pb-0 [&::-webkit-scrollbar]:hidden">
                 {curveDiagrams.map((diagram) => (
                   <figure
                     key={diagram.src}
-                    className="w-[74vw] max-w-[18rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/78 p-3 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto md:max-w-none"
+                    className="w-[74vw] max-w-[18rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/78 p-3 shadow-[0_18px_42px_rgba(0,0,0,0.24)] xl:w-auto xl:max-w-none"
                   >
                     <div className="overflow-hidden rounded-lg border border-[#8f5c32]/14 bg-[#120c08]">
                       <img src={diagram.src} alt={diagram.alt} className="block aspect-[1.45] w-full object-contain p-1" />
@@ -227,7 +227,9 @@ export default function Fad3rsPage() {
                         key={image.src}
                         className="w-[78vw] max-w-[22rem] shrink-0 snap-start overflow-hidden rounded-xl border border-[#8f5c32]/22 bg-[#0c0806]/76 p-2 shadow-[0_18px_42px_rgba(0,0,0,0.24)] md:w-auto md:max-w-none"
                       >
-                        <img src={image.src} alt={image.alt} className="block w-full rounded-lg object-contain" />
+                        <a href={image.src} target="_blank" rel="noreferrer" className="block rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d5a06a]/70">
+                          <img src={image.src} alt={image.alt} className="block w-full rounded-lg object-contain" />
+                        </a>
                       </figure>
                     ))}
                   </div>
