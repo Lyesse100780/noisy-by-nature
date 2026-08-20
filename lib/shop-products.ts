@@ -8,7 +8,7 @@ export type ShopProduct = RawProduct & {
   currency: "eur";
   available: boolean;
   stockQuantity: number;
-  category: "controller" | "case" | "test";
+  category: "controller" | "case";
   variants?: Fad3rsUsbVariant[];
 };
 
@@ -68,23 +68,7 @@ export const caseProducts: ShopProduct[] = rawCaseProducts.map((product) => ({
   category: "case",
 }));
 
-const hiddenTestProducts: ShopProduct[] = [
-  {
-    slug: "checkout-test-1eur",
-    name: "Checkout Test — 1 EUR",
-    price: "EUR 1",
-    priceAmount: 100,
-    currency: "eur",
-    available: true,
-    stockQuantity: 99,
-    category: "test",
-    description: "Hidden checkout smoke-test product for validating the live Stripe checkout flow.",
-    specs: ["Hidden from the public shop", "No physical shipment", "For payment testing only"],
-    images: ["/images/brand/fad3rs-black-edition/fad3rs-black-edition-1.png"],
-  },
-];
-
-export const shopProducts: ShopProduct[] = [...controllerProducts, ...caseProducts, ...hiddenTestProducts];
+export const shopProducts: ShopProduct[] = [...controllerProducts, ...caseProducts];
 
 export function getShopProduct(slug: string) {
   return shopProducts.find((product) => product.slug === slug);
