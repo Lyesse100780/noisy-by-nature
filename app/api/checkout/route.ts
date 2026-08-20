@@ -102,20 +102,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Selected shipping method is not available." }, { status: 400 });
     }
 
-    lineItems.push({
-      quantity: 1,
-      price_data: {
-        currency: "eur",
-        unit_amount: shippingOption.amount,
-        product_data: {
-          name: `Shipping - ${shippingOption.label}`,
-          metadata: {
-            country: country.code,
-            method: shippingOption.id,
+    if (shippingOption.amount > 0) {
+      lineItems.push({
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: shippingOption.amount,
+          product_data: {
+            name: `Shipping - ${shippingOption.label}`,
+            metadata: {
+              country: country.code,
+              method: shippingOption.id,
+            },
           },
         },
-      },
-    });
+      });
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

@@ -1,7 +1,7 @@
 import type { ShopProduct } from "@/lib/shop-products";
 
-export type ShippingMethodId = "colissimo" | "mondial-relay";
-export type ShippingTier = "controller" | "controller-pair" | "small-case" | "large-case";
+export type ShippingMethodId = "colissimo" | "mondial-relay" | "checkout-test";
+export type ShippingTier = "controller" | "controller-pair" | "small-case" | "large-case" | "test";
 
 export type ShippingCountry = {
   code: string;
@@ -40,6 +40,7 @@ const colissimoRates: Record<ShippingTier, Record<ShippingCountry["zone"], numbe
   "controller-pair": { france: 1400, "europe-1": null, "europe-2": null },
   "small-case": { france: 1500, "europe-1": 2000, "europe-2": 2500 },
   "large-case": { france: 1800, "europe-1": 2200, "europe-2": 2800 },
+  test: { france: null, "europe-1": null, "europe-2": null },
 };
 
 const mondialRelayRates: Record<ShippingTier, number | null> = {
@@ -47,6 +48,7 @@ const mondialRelayRates: Record<ShippingTier, number | null> = {
   "controller-pair": null,
   "small-case": 1000,
   "large-case": 1400,
+  test: null,
 };
 
 export function getShippingCountry(code: string) {
@@ -55,6 +57,10 @@ export function getShippingCountry(code: string) {
 
 export function getProductShippingTier(product: ShopProduct): ShippingTier {
   const title = product.name.toLowerCase();
+
+  if (product.category === "test") {
+    return "test";
+  }
 
   if (product.category === "controller" || title.includes("fad3rs") || title.includes("mast3r")) {
     return "controller";
@@ -68,6 +74,10 @@ export function getProductShippingTier(product: ShopProduct): ShippingTier {
 }
 
 export function getCartShippingTier(products: ShopProduct[]): ShippingTier {
+  if (products.length > 0 && products.every((product) => product.category === "test")) {
+    return "test";
+  }
+
   const totalWeight = products.reduce((sum, product) => {
     const tier = getProductShippingTier(product);
 
@@ -87,6 +97,10 @@ export function getShippingOptions(countryCode: string, products: ShopProduct[])
   if (!country || products.length === 0) return [];
 
   const tier = getCartShippingTier(products);
+  if (tier === "test") {
+    return [{ id: "checkout-test", label: "Checkout test — no shipping", amount: 0 }];
+  }
+
   const colissimoAmount = colissimoRates[tier][country.zone];
   const options: ShippingOption[] = [];
 
