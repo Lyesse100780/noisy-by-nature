@@ -11,12 +11,6 @@ export type Fad3rsUsbVariant = {
   available: boolean;
 };
 
-function readSoldQuantity(value: string | undefined) {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return 0;
-  return Math.max(0, Math.floor(parsed));
-}
-
 function createVariant(
   id: Fad3rsUsbVariantId,
   label: string,
@@ -46,7 +40,7 @@ export const fad3rsUsbVariants: Fad3rsUsbVariant[] = [
     "Classic USB-A cable",
     "USB-A cable",
     5,
-    readSoldQuantity(process.env.NEXT_PUBLIC_FAD3RS_USB_A_SOLD),
+    5,
   ),
   createVariant(
     "usb-c",
@@ -54,7 +48,7 @@ export const fad3rsUsbVariants: Fad3rsUsbVariant[] = [
     "USB-C cable for recent Macs/iPad",
     "USB-C cable",
     3,
-    readSoldQuantity(process.env.NEXT_PUBLIC_FAD3RS_USB_C_SOLD),
+    3,
   ),
 ];
 
