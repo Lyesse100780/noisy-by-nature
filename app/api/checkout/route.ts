@@ -122,6 +122,9 @@ export async function POST(request: Request) {
       line_items: lineItems,
       allow_promotion_codes: true,
       billing_address_collection: "auto",
+      phone_number_collection: {
+        enabled: true,
+      },
       shipping_address_collection: {
         allowed_countries: [
           country.code as Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry,
