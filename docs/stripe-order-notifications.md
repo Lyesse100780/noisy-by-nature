@@ -22,10 +22,15 @@ Register it in Stripe Dashboard with these events:
 
 ## Required environment variables
 
-Set these in Vercel production environment:
+Set this in Vercel production environment:
 
 ```text
 STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Seller pings fall back to the existing Formspree contact endpoint when Resend is not configured. For direct email delivery via Resend, set:
+
+```text
 RESEND_API_KEY=re_...
 ORDER_NOTIFICATION_EMAIL=orders@noisybynature.eu
 ORDER_EMAIL_FROM=Noisy by Nature <orders@noisybynature.eu>
@@ -44,4 +49,4 @@ On `checkout.session.expired` or `checkout.session.async_payment_failed`:
 
 - alerts Noisy with the session ID, payment status, customer email/phone when available, and a Stripe dashboard search link.
 
-If `ORDER_NOTIFICATION_EMAIL` is not configured, seller alerts fall back to the existing Formspree endpoint. Customer confirmations require Resend.
+Seller alerts always fall back to the existing Formspree endpoint when Resend is not configured. Customer confirmations require Resend; otherwise customers still receive Stripe receipts when Stripe customer emails are enabled.

@@ -110,9 +110,11 @@ export async function notifyOrderCompleted({ session, lineItems }: OrderNotifica
   const sellerSubject = `New Noisy order — ${total}`;
   const sellerMessage = `A Stripe Checkout payment succeeded.\n\nSession: ${session.id}\nPayment intent: ${session.payment_intent ?? "n/a"}\nTotal: ${total}\nCustomer: ${customerName}\nEmail: ${customerEmail ?? "n/a"}\nPhone: ${customerPhone}\n\nShipping address:\n${shippingAddress}\n\nItems:\n${items}\n\nStripe:\n${orderUrl}`;
 
-  if (orderNotificationEmail) {
-    await sendResendEmail(orderNotificationEmail, sellerSubject, sellerMessage);
-  } else {
+  const sellerNotifiedByResend = orderNotificationEmail
+    ? await sendResendEmail(orderNotificationEmail, sellerSubject, sellerMessage)
+    : false;
+
+  if (!sellerNotifiedByResend) {
     await sendSellerFormspreeNotification(sellerSubject, sellerMessage, customerEmail);
   }
 
@@ -142,9 +144,11 @@ export async function notifyCheckoutIssue(session: Stripe.Checkout.Session, even
   const subject = `Noisy checkout issue — ${eventType}`;
   const message = `A Stripe Checkout session needs attention.\n\nEvent: ${eventType}\nSession: ${session.id}\nPayment intent: ${session.payment_intent ?? "n/a"}\nPayment status: ${session.payment_status}\nStatus: ${session.status}\nTotal: ${total}\nCustomer: ${customerName}\nEmail: ${customerEmail ?? "n/a"}\nPhone: ${customerPhone}\n\nStripe dashboard:\nhttps://dashboard.stripe.com/search?query=${encodeURIComponent(session.id)}`;
 
-  if (orderNotificationEmail) {
-    await sendResendEmail(orderNotificationEmail, subject, message);
-  } else {
+  const sellerNotifiedByResend = orderNotificationEmail
+    ? await sendResendEmail(orderNotificationEmail, subject, message)
+    : false;
+
+  if (!sellerNotifiedByResend) {
     await sendSellerFormspreeNotification(subject, message, customerEmail);
   }
 }
